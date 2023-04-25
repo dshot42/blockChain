@@ -1,0 +1,35 @@
+plugins {
+    id 'java'
+    id 'java-library'
+    //id 'application'
+}
+
+/*
+application {
+    mainClass = 'fr.altaiire.pacali.EncryptData'
+}
+*/
+
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
+}
+
+
+
+
+jar {
+    // Keep jar clean:
+    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
+
+    manifest {
+        attributes 'Main-Class': 'fr.altaiire.pacali.EncryptData'
+//                'Class-Path': configurations.runtime.files.collect { "lib/$it.name" }.join(' ')
+    }
+}
+

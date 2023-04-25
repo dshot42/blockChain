@@ -1,0 +1,52 @@
+
+Get : GET -> localhost:8090/testApi2/Workorder/_id/6
+localhost:8090/testApi2/Workorder/equipementProduit/COMERA
+localhost:8090/testApi2/Workorder/qtyToManufacture/500
+
+localhost:8090/testApi2/Workorder/equipementProduit/CO/LIKE
+localhost:8090/testApi2/Workorder/equipementProduit/CO/NOT
+localhost:8090/testApi2/Workorder/qtyToManufacture/100;300/gt;lt
+
+GetAll : GET -> localhost:8090/testApi2/Workorder
+Create : POST -> localhost:8090/testApi2/Workorder
+Update : PUT -> localhost:8090/testApi2/Workorder/6
+Delete : DELETE -> localhost:8090/testApi2/Workorder/6
+
+workorder example :
+-------------------------------------
+{
+  "_id": 6, // pour l'update uniquement !
+  "workorderClosingDate": "2023-02-28T00:00:00.000+01:00",
+  "productRef": "tuto",
+  "qtyManufactured": 40,
+  "qtyPendingParts": 0,
+  "dateFinAtelier": "2023-12-12T00:00:00.000+01:00",
+  "equipementProduit": "COMERA",
+  "id": "tata",
+  "productType": "221T06F22",
+  "qteConnecteurs": 6,
+  "qteLopins": 800,
+  "qtyLeftToIntroduceParts": 460,
+  "refBoitier": "13279-06",
+  "qtyRejectedParts": 0,
+  "tpsPrevu": 43200,
+  "workOrderId": "LCT2304859",
+  "dateFinPrevu": "2023-03-30T00:00:00.000+02:00",
+  "recipeId": "",
+  "uniteTpsPrevu": 100,
+  "createdAt": "2023-02-28T00:00:00.000+01:00",
+  "startedAt": "",
+  "workorderState": "IN_PROGRESS",
+  "qtyToManufacture": 500,
+  "cycletimeObjective": 43200,
+  "associatedRecipe": {
+    "globalParametersValues": {},
+    "id": "",
+    "lastModifiedDate": "",
+    "productReference": "",
+    "recipeId": "",
+    "subSystemRecipe": {},
+    "version": ""
+  },
+  "subSystemCounters": {}
+}

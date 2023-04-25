@@ -1,0 +1,5 @@
+rootProject.name = 'crypto-block-chain'
+
+include 'spring-core','chiffrement-utils'
+include 'Wallet'
+
