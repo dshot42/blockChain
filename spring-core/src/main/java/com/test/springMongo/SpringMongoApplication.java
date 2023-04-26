@@ -1,8 +1,8 @@
 package com.test.springMongo;
 
 import com.test.springMongo.transaction.initTransaction.initBlockChain.CreateBlockChain;
-import com.test.springMongo.transaction.personalWalletHandler.PersonnalWalletHandler;
-import com.test.springMongo.transaction.seller.AskAndReceiveTransactionProcess;
+import com.test.springMongo.wallet.personalWalletHandler.PrivateWalletHandler;
+import com.test.springMongo.transaction.seller.AckAndReceiveTransactionProcess;
 import com.test.springMongo.transaction.buyer.SendTransactionProcess;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -17,12 +17,12 @@ public class SpringMongoApplication {
 
     static SendTransactionProcess sendTransactionController;
 
-    static AskAndReceiveTransactionProcess askTransactionController;
+    static AckAndReceiveTransactionProcess askTransactionController;
 
 
 
     @Autowired
-    public SpringMongoApplication(CreateBlockChain createInitBlockChain, SendTransactionProcess sendTransaction, AskAndReceiveTransactionProcess askTransactionController) {
+    public SpringMongoApplication(CreateBlockChain createInitBlockChain, SendTransactionProcess sendTransaction, AckAndReceiveTransactionProcess askTransactionController) {
         this.createInitBlockChain = createInitBlockChain;
         this.sendTransactionController = sendTransaction;
         this.askTransactionController = askTransactionController;
@@ -44,18 +44,16 @@ public class SpringMongoApplication {
     public static void main(String[] args) throws Exception {
         SpringApplication.run(SpringMongoApplication.class, args);
         createInitBlockChain.initBlockChain();
-        initWalletHandler();
+        checkWallet();
         launchTransaction();
     }
 
-    public static void initWalletHandler() {
-        Thread buyerWallet = new Thread( new PersonnalWalletHandler("Buyer","127.0.0.1:4444")); // acheteur
-        buyerWallet.start();
-
-        Thread sellerWallet = new Thread(new PersonnalWalletHandler("Seller","127.0.0.1:4443")); // acheteur
-        sellerWallet.start();
+    private static void checkWallet() {
+        PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler("Buyer");
+        if (privateWalletHandler.testWallet()) {
+            privateWalletHandler.testWallet();
+        }
     }
-
     private static void launchTransaction() throws InterruptedException {
         Thread tSend = new Thread(sendTransactionController); // acheteur
         tSend.start();

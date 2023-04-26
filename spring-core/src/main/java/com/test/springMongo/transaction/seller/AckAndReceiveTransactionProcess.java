@@ -3,11 +3,12 @@ package com.test.springMongo.transaction.seller;
 import com.chiffrement.ChiffrementUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.test.springMongo.models.CryptedTransaction;
-import com.test.springMongo.models.PublicWallet;
+import com.test.springMongo.models.PrivateWallet;
 import com.test.springMongo.models.Transaction;
 import com.test.springMongo.transaction.consensus.nodeThreads.utils.GenericObjectConvert;
 import com.test.springMongo.transaction.consensus.nodeThreads.utils.NodeUtils;
-import com.test.springMongo.transaction.initTransaction.initPublicWallet.InitWallet;
+import com.test.springMongo.wallet.InitWallet;
+import com.test.springMongo.wallet.personalWalletHandler.PrivateWalletHandler;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -30,16 +31,20 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @RestController
-public class AskAndReceiveTransactionProcess implements Runnable { // processus du vendeur
+public class AckAndReceiveTransactionProcess implements Runnable { // processus du vendeur
 
     private static ServerSocket serverSocket;
     private static Socket clientSocket;
     private static PrintWriter out;
     private static BufferedReader in;
 
+    private Socket socketOfSeller;
 
     @Autowired
     NodeUtils nodeUtils;
+
+
+    private static PrivateWallet privateWallet;
 
     private static byte[] privateKey = new byte[]
             {-95, -14, 120, 61, 45, 104, 101, -13, -98, -20, -69, -41,
@@ -49,6 +54,9 @@ public class AskAndReceiveTransactionProcess implements Runnable { // processus 
     @Override
     public void run() {
         try {
+            PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler("Seller");
+            privateWallet = privateWalletHandler.getWallet();
+
             sendAskTransaction();
 
             ExecutorService executor
@@ -76,6 +84,7 @@ public class AskAndReceiveTransactionProcess implements Runnable { // processus 
         askTransaction.setSenderAddress(InitWallet.sellerWallet);
         askTransaction.setDateTime(LocalDateTime.now().toString());
         askTransaction.setKey(privateKey);
+        askTransaction.setState("ACK");
         return askTransaction;
     }
 
@@ -98,8 +107,8 @@ public class AskAndReceiveTransactionProcess implements Runnable { // processus 
             Transaction transaction = objectMapper.readValue(transaction2string, Transaction.class);
 
             transaction.setHash(ChiffrementUtils.generateHashKey(transaction.toString()));
-            sendTransactionToBlockChain(transaction);
-            // credit // debit wallet !
+            pushTransactionOnBlockChain(transaction);
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -114,35 +123,59 @@ public class AskAndReceiveTransactionProcess implements Runnable { // processus 
         CryptedTransaction cryptedTransaction = nodeUtils.jsonToCryptedTransaction(in.readLine());
         String thisHash = nodeUtils.hashTransaction(cryptedTransaction.getCryptedTransaction());
 
+        System.out.println("SENDTRASACTION receive");
         if (nodeUtils.checkValidation(cryptedTransaction.getHash(), thisHash))
             doTransaction(cryptedTransaction);
 
+        serverSocket.close();
+        socketClientStart();
     }
 
 
-    public void sendTransactionToBlockChain(Transaction transaction) throws Exception {
+    public void pushTransactionOnBlockChain(Transaction transaction) throws Exception {
 
         StringEntity entity = new StringEntity(ChiffrementUtils.cryptAES(GenericObjectConvert.objectToString(transaction)),
                 ContentType.APPLICATION_FORM_URLENCODED);
 
         DefaultHttpClient httpClient = new DefaultHttpClient();
 
-        HttpPost request = new HttpPost("http://localhost:8090/MongoDb/BlockChain");
+        HttpPost request = new HttpPost("http://localhost:8090/MongoDb/BlockChain/transaction");
         request.addHeader("content-type", "application/json");
         request.setEntity(entity);
         try {
             CloseableHttpResponse response = httpClient.execute(request);
             HttpEntity respEntity = response.getEntity();
-            System.out.println("send transaction to the block chain system ," + respEntity.getContent());
             String data = new BufferedReader(new InputStreamReader(respEntity.getContent(),
                     StandardCharsets.UTF_8))
                     .lines()
                     .collect(Collectors.joining("\n"));
 
+            Transaction returnedTransac = Transaction.class.cast(GenericObjectConvert.stringToObject(data, Transaction.class));
+
+            System.out.println("send transaction hash : {" + transaction.getHash() + "} to the block chain system with success ");
+            sendFeedBackBlockChain(returnedTransac);
 
         } catch (Exception e) {
-            System.out.println("Erreur lors de la communication avec le serveur, ");
+            System.out.println("Erreur lors de la communication avec le serveur, POST on block chain ");
         }
+    }
+
+
+    public void sendFeedBackBlockChain(Transaction returnedTransac) throws Exception {
+
+        CryptedTransaction cryptedTransaction = new CryptedTransaction();
+
+        cryptedTransaction.setCryptedTransaction(ChiffrementUtils
+                .cryptAES(GenericObjectConvert.objectToString(returnedTransac),privateKey));
+        cryptedTransaction.setState("FEEDBACK");
+        nodeUtils.persistTransactionOnWallet(cryptedTransaction,privateKey,"Seller");
+        String json = GenericObjectConvert.objectToString(cryptedTransaction);
+
+        Socket socket = new Socket(returnedTransac.getSenderAddress().getAddress().split(":")[0], Integer.parseInt(returnedTransac.getSenderAddress().getAddress().split(":")[1]));
+        OutputStream output = socket.getOutputStream();
+        output.write(json.getBytes());
+        PrintWriter writer = new PrintWriter(output, true);
+        writer.println();
     }
 
 }

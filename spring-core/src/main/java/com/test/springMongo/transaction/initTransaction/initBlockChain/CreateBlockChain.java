@@ -1,7 +1,7 @@
 package com.test.springMongo.transaction.initTransaction.initBlockChain;
 
 import com.test.springMongo.models.Block;
-import com.test.springMongo.system.mongoDb.service.ElementRepository;
+import com.test.springMongo.system.mongoDb.repository.ElementRepository;
 import com.test.springMongo.system.mongoDb.service.SequenceGeneratorService;
 import com.chiffrement.ChiffrementUtils;
 import org.springframework.beans.factory.annotation.Autowired;

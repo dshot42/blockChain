@@ -5,6 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c1a40880-6b52-4b3a-aad7-659c72ee6de1" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
@@ -59,26 +65,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;11&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Come/IdeaProjects/crypto-block-chain/spring-core/src/main/resources&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.projectsettings.compiler.javacompiler&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "jdk.selected.JAVA_MODULE": "11",
+    "last_opened_file_path": "C:/Users/Come/IdeaProjects/crypto-block-chain/spring-core/src/main/java/com/test/springMongo/system/mongoDb/repository",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "reference.projectsettings.compiler.javacompiler"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Come\IdeaProjects\crypto-block-chain\spring-core\src\main\java\com\test\springMongo\system\mongoDb\repository" />
       <recent name="C:\Users\Come\IdeaProjects\crypto-block-chain\spring-core\src\main\resources" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Come\IdeaProjects\crypto-block-chain\spring-core\src\main\resources\wallet" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.test.springMongo.transaction.personalWalletHandler" />
       <recent name="com.test.springMongo.transaction.seller" />
       <recent name="com.test.springMongo.models" />
       <recent name="com.test.springMongo.transaction" />
@@ -158,41 +166,31 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/transaction/personalWalletHandler/PersonnalWalletHandler.java</url>
-          <line>106</line>
-          <option name="timeStamp" value="87" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/transaction/personalWalletHandler/PersonnalWalletHandler.java</url>
-          <line>104</line>
+          <url>file://$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/wallet/personalWalletHandler/PrivateWalletHandler.java</url>
+          <line>112</line>
           <option name="timeStamp" value="88" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/transaction/seller/AskAndReceiveTransactionProcess.java</url>
-          <line>145</line>
-          <option name="timeStamp" value="91" />
+          <url>file://$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/system/mongoDb/service/BlockChainService.java</url>
+          <line>75</line>
+          <option name="timeStamp" value="150" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/transaction/seller/AskAndReceiveTransactionProcess.java</url>
-          <line>117</line>
-          <option name="timeStamp" value="93" />
+          <url>file://$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/transaction/consensus/nodeThreads/utils/NodeUtils.java</url>
+          <line>98</line>
+          <option name="timeStamp" value="151" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/transaction/seller/AskAndReceiveTransactionProcess.java</url>
-          <line>110</line>
-          <option name="timeStamp" value="94" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/transaction/buyer/SendTransactionProcess.java</url>
-          <line>81</line>
-          <option name="timeStamp" value="97" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/transaction/buyer/SendTransactionProcess.java</url>
+          <url>file://$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/wallet/personalWalletHandler/WalletService.java</url>
           <line>46</line>
-          <option name="timeStamp" value="98" />
+          <option name="timeStamp" value="154" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+    <watches-manager>
+      <configuration name="GradleRunConfiguration">
+        <watch expression="immutableHashTransaction" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

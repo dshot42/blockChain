@@ -4,8 +4,8 @@ package com.test.springMongo.system.mongoDb.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.test.springMongo.system.mongoDb.repository.ElementRepository;
 import com.test.springMongo.system.mongoDb.service.BlockChainService;
-import com.test.springMongo.system.mongoDb.service.ElementRepository;
 import com.test.springMongo.system.mongoDb.service.SequenceGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import javax.validation.Valid;
 //@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/MongoDb")
-public class ElementControllerGeneric {
+public class MongoController {
 
     @Autowired
     ElementRepository elementService;
@@ -40,7 +40,14 @@ public class ElementControllerGeneric {
     public Object getAllElements(@PathVariable(value = "element") String element, @PathVariable(value = "field") String field,
                                  @PathVariable(value = "value") String value, @PathVariable(value = "filter") String filter) throws ClassNotFoundException {
         //curl -X GET localhost:8090/api/vi/elements/WorkOrder
-        return ResponseEntity.ok(elementService.getElementBy(this.getClassForName(element),field,value,filter));
+        return ResponseEntity.ok(elementService.getElementBy(this.getClassForName(element), field, value, filter));
+    }
+
+    @GetMapping("/{element}/{field}/{value}")
+    public Object getAllElements(@PathVariable(value = "element") String element, @PathVariable(value = "field") String field,
+                                 @PathVariable(value = "value") String value) throws ClassNotFoundException {
+        //curl -X GET localhost:8090/api/vi/elements/WorkOrder
+        return ResponseEntity.ok(elementService.getElementBy(this.getClassForName(element), field, value));
     }
 
     @GetMapping("/{element}")
@@ -51,9 +58,6 @@ public class ElementControllerGeneric {
 
     @PostMapping("/{element}")
     public ResponseEntity<Object> createOrUpdateElement(@PathVariable(value = "element") String element, @Valid @RequestBody String datas) throws Exception {
-        if (element.equals("BlockChain")) {
-            return ResponseEntity.ok( blockChainService.registryTransactionOnBlockChain(datas));
-        }
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(datas);
         ((ObjectNode) jsonNode).put("_id", sequenceGeneratorService.generateSequence(element + "_seq"));
@@ -77,6 +81,19 @@ public class ElementControllerGeneric {
 
     private static Class<?> getClassForName(String element) throws ClassNotFoundException {
         return Class.forName(element);
+    }
+
+    ///////////////////// specificBlockChain /////////////////// a mettre ailleurs !
+
+    @PostMapping("/BlockChain/transaction/checkIntegrity")
+    public Object getTransaction(@Valid @RequestBody String datas) throws Exception {
+        //curl -X GET localhost:8090/api/vi/elements/WorkOrder
+        return ResponseEntity.ok(blockChainService.checkIntegrityOfTransaction(datas));
+    }
+
+    @PostMapping("/BlockChain/transaction")
+    public ResponseEntity<Object> createOrUpdateBlockChain(@Valid @RequestBody String datas) throws Exception {
+        return ResponseEntity.ok(blockChainService.registryTransactionOnBlockChain(datas));
     }
 
 }

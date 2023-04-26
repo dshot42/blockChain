@@ -6,6 +6,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("Transaction")
 public class Transaction {
+
+
     @Id
     Long id;
 
@@ -21,6 +23,10 @@ public class Transaction {
     String immutableChainedHash;
 
     String dateTime;
+
+    String blockHash;
+
+    Long idBlock;
 
     public Long getId() {
         return id;
@@ -87,6 +93,19 @@ public class Transaction {
         this.hash = hash;
     }
 
+    public String getBlockHash() {
+        return blockHash;
+    }
 
+    public void setBlockHash(String blockHash) {
+        this.blockHash = blockHash;
+    }
 
+    public Long getIdBlock() {
+        return idBlock;
+    }
+
+    public void setIdBlock(Long idBlock) {
+        this.idBlock = idBlock;
+    }
 }

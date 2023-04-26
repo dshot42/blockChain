@@ -2,9 +2,9 @@ package com.test.springMongo.models;
 
 import java.util.List;
 
-public class PersonnalWallet extends PublicWallet {
+public class PrivateWallet extends PublicWallet {
 
-    public PersonnalWallet() {
+    public PrivateWallet() {
     }
 
     byte[] key;
@@ -15,7 +15,7 @@ public class PersonnalWallet extends PublicWallet {
 
     public float amount;
 
-    public PersonnalWallet(String address, String uniqueWalletId) {
+    public PrivateWallet(String address, String uniqueWalletId) {
         super(address, uniqueWalletId);
     }
 

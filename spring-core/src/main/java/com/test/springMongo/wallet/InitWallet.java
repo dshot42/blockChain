@@ -1,6 +1,7 @@
-package com.test.springMongo.transaction.initTransaction.initPublicWallet;
+package com.test.springMongo.wallet;
 
 import com.chiffrement.ChiffrementUtils;
+import com.test.springMongo.models.PrivateWallet;
 import com.test.springMongo.models.PublicWallet;
 
 public class InitWallet {
@@ -8,7 +9,7 @@ public class InitWallet {
 
     static {
         try {
-            sellerWallet = new PublicWallet("127.0.0.1:4998", ChiffrementUtils.generateHashKey("TOTO"));
+            sellerWallet = new PublicWallet("127.0.0.1:9999", "Seller");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -18,7 +19,7 @@ public class InitWallet {
 
     static {
         try {
-            buyerWallet = new PublicWallet("127.0.0.1:4999",ChiffrementUtils.generateHashKey("KIKI"));
+                buyerWallet = new PublicWallet("127.0.0.1:9998","Buyer");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

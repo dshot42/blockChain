@@ -4,11 +4,11 @@ import com.chiffrement.ChiffrementUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.test.springMongo.models.CryptedTransaction;
-import com.test.springMongo.models.PublicWallet;
+import com.test.springMongo.models.PrivateWallet;
 import com.test.springMongo.models.Transaction;
 import com.test.springMongo.transaction.consensus.nodeThreads.utils.GenericObjectConvert;
 import com.test.springMongo.transaction.consensus.nodeThreads.utils.NodeUtils;
-import com.test.springMongo.transaction.initTransaction.initPublicWallet.InitWallet;
+import com.test.springMongo.wallet.InitWallet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,12 +28,22 @@ public class SendTransactionProcess implements Runnable { // processus de l'ache
     private static PrintWriter out;
     private static BufferedReader in;
 
-    private PublicWallet publicWallet;
+    private PrivateWallet privateWallet;
+
+    public static byte[] privateKeyCache;
 
     public void run() {
         try {
-            publicWallet = InitWallet.buyerWallet;
-            socketClientStart();
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        socketClientStart();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }).start();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -43,14 +53,15 @@ public class SendTransactionProcess implements Runnable { // processus de l'ache
     public String generateCryptedTransaction(CryptedTransaction ackTransaction) throws Exception {
 
         Transaction transaction = MapperTransaction(ackTransaction);
+
         CryptedTransaction sendTransaction = new CryptedTransaction();
         sendTransaction.setReceiverAddress(ackTransaction.getSenderAddress());
         // laddresse de m'émeteur devient laddresse du recepteur
-
         String transactionJson = GenericObjectConvert.objectToString(transaction);
-        sendTransaction.setCryptedTransaction(ChiffrementUtils.cryptAES(transactionJson, ackTransaction.getKey()));
+        privateKeyCache = ackTransaction.getKey();
+        sendTransaction.setCryptedTransaction(ChiffrementUtils.cryptAES(transactionJson, privateKeyCache));
         sendTransaction.setHash(ChiffrementUtils.generateHashKey(sendTransaction.getCryptedTransaction()));
-
+        sendTransaction.setState("SENDTRANSACTION");
         return GenericObjectConvert.objectToString(sendTransaction);
     }
 
@@ -64,12 +75,6 @@ public class SendTransactionProcess implements Runnable { // processus de l'ache
         return transaction;
     }
 
-    public void sendCryptedTransactionOnNode(CryptedTransaction askTransaction) throws Exception {
-        String firstMember = nodeUtils.getRandomNextNodeMember();
-        nodeUtils.startNextNodeMemberThread(firstMember);
-        String cryptedTransactiondata = generateCryptedTransaction(askTransaction);
-        nodeUtils.socketEmitToNextThread(firstMember, cryptedTransactiondata);
-    }
 
     public void socketClientStart() throws Exception {
         ServerSocket serverSocket = new ServerSocket(Integer.parseInt(InitWallet.buyerWallet.getAddress().split(":")[1]));
@@ -77,10 +82,21 @@ public class SendTransactionProcess implements Runnable { // processus de l'ache
         out = new PrintWriter(clientSocket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         String datas = in.readLine();
-
         // if accepte => send
-        sendCryptedTransactionOnNode(getAckTransaction(datas));
+        CryptedTransaction cryptedTransaction = getAckTransaction(datas);
+
+        if (cryptedTransaction.getState().equals("ACK")) {
+            System.out.println("ACK receive");
+            nodeUtils.sendCryptedTransactionOnNode(generateCryptedTransaction(cryptedTransaction));
+        } else if (cryptedTransaction.getState().equals("FEEDBACK")) { //  state = feedback
+            System.out.println("FEEDBACK receive");
+            nodeUtils.persistTransactionOnWallet(cryptedTransaction, privateKeyCache, "Buyer");
+            System.out.println("Fin de la transaction ! ");
+        }
+        serverSocket.close();
+        socketClientStart();
     }
+
 
     public CryptedTransaction getAckTransaction(String datas) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();

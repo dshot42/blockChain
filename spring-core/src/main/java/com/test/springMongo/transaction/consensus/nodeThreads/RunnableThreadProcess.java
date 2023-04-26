@@ -68,9 +68,10 @@ public class RunnableThreadProcess implements Runnable { // membre du jury
                 Thread.sleep(100); // cela serait mieux avec un ack, verifier que les socket member sont ready !
 
                 nodeUtils.socketEmitToNextThread(nextMember, GenericObjectConvert.objectToString(cryptedTransaction));
-            }
-            else
+            } else {
                 sendToFinalDestinator(cryptedTransaction, GenericObjectConvert.objectToString(cryptedTransaction));
+                cptMember = 0;
+            }
         } else {
             System.out.println("Violation de l'intégrité de la transaction ! ");
             // transaction aborted

@@ -1,7 +1,8 @@
-package com.test.springMongo.system.mongoDb.service;
+package com.test.springMongo.system.mongoDb.repository;
 
 
 import com.test.springMongo.system.mongoDb.criteriaFilter.CriteriaFilter;
+import com.test.springMongo.system.mongoDb.service.SequenceGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
