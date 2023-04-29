@@ -20,9 +20,9 @@ import java.util.Base64;
 public class ChiffrementUtils {
 
     static String algorithm = "AES/CBC/PKCS5Padding";
-    static byte[] defaultKey = new byte[]{-95, -14, 120, 61, 45, 104, 101, -13, -98, -20, -69, -41, -97, 83, 46, 75, -104, 105, -3, 111, -125, -90, -11, -8, 60, 69, 38, -33, 78, 55, -65, 104};
+    public static byte[] systemKey = new byte[]{-95, -14, 120, 61, 45, 104, 101, -13, -98, -20, -69, -41, -97, 83, 46, 75, -104, 105, -3, 111, -125, -90, -11, -8, 60, 69, 38, -33, 78, 55, -65, 104};
     // System.out.println(" key   " + Hex.encodeHex(key));
-    static SecretKey secretKey = new SecretKeySpec(defaultKey, 0, defaultKey.length, "AES");
+    static SecretKey secretKey = new SecretKeySpec(systemKey, 0, systemKey.length, "AES");
 
     static byte[] iv = {-92, -101, -41, -27, -61, -44, 29, 82, -121, 11, -77, 9, -106, 15, -100, -55};
     // System.out.println(" iv   " + Hex.encodeHex(iv));
@@ -66,7 +66,7 @@ public class ChiffrementUtils {
 
     public static String cryptAES(String datas) throws Exception {
 
-         SecretKey secretKey = new SecretKeySpec(defaultKey, 0, defaultKey.length, "AES");
+         SecretKey secretKey = new SecretKeySpec(systemKey, 0, systemKey.length, "AES");
         try {
             // openssl enc -aes-256-cbc -k secret -P -md sha1
             Cipher cipher = Cipher.getInstance(algorithm);
@@ -102,7 +102,7 @@ public class ChiffrementUtils {
 
     public static String cryptAES(String datas,byte[] key) throws Exception {
 
-        SecretKey secretKey = new SecretKeySpec(key, 0, defaultKey.length, "AES");
+        SecretKey secretKey = new SecretKeySpec(key, 0, key.length, "AES");
         try {
             // openssl enc -aes-256-cbc -k secret -P -md sha1
             Cipher cipher = Cipher.getInstance(algorithm);
@@ -117,7 +117,7 @@ public class ChiffrementUtils {
     }
 
     public static String decryptAES(String datas,byte[] key) throws Exception{
-        SecretKey secretKey = new SecretKeySpec(key, 0, defaultKey.length, "AES");
+        SecretKey secretKey = new SecretKeySpec(key, 0, key.length, "AES");
         Cipher cipher = Cipher.getInstance(algorithm);
         cipher.init(Cipher.DECRYPT_MODE,  secretKey, ivParameterSpec);
         byte[] plainText = cipher.doFinal(Base64.getDecoder()
