@@ -48,35 +48,35 @@ public class ElementRepository {
 
     private static Query queryFilter(String field, String v, String filter) {
         Query query = new Query();
-            switch (CriteriaFilter.valueOf(filter.toUpperCase())) {
-                case IS:
-                    query.addCriteria(Criteria.where(field).is(v));
-                    break;
-                case LIKE:
-                    query.addCriteria(Criteria.where(field).ne("%" + v + "%"));
-                    break;
-                case LIKELAST:
-                    query.addCriteria(Criteria.where(field).ne("%" + v));
-                    break;
-                case LIKEFIRST:
-                    query.addCriteria(Criteria.where(field).ne(v + "%"));
-                    break;
-                case NOT:
-                    query.addCriteria(Criteria.where(field).ne(v));
-                    break;
-                case LT:
-                    query.addCriteria(Criteria.where(field).lt(Float.parseFloat(v)));
-                    break;
-                case LTE:
-                    query.addCriteria(Criteria.where(field).lte(Float.parseFloat(v)));
-                    break;
-                case GT:
-                    query.addCriteria(Criteria.where(field).gt(Float.parseFloat(v)));
-                    break;
-                case GTE:
-                    query.addCriteria(Criteria.where(field).gte(Float.parseFloat(v)));
-                    break;
-            }
+        switch (CriteriaFilter.valueOf(filter.toUpperCase())) {
+            case IS:
+                query.addCriteria(Criteria.where(field).is(v));
+                break;
+            case LIKE:
+                query.addCriteria(Criteria.where(field).ne("%" + v + "%"));
+                break;
+            case LIKELAST:
+                query.addCriteria(Criteria.where(field).ne("%" + v));
+                break;
+            case LIKEFIRST:
+                query.addCriteria(Criteria.where(field).ne(v + "%"));
+                break;
+            case NOT:
+                query.addCriteria(Criteria.where(field).ne(v));
+                break;
+            case LT:
+                query.addCriteria(Criteria.where(field).lt(Float.parseFloat(v)));
+                break;
+            case LTE:
+                query.addCriteria(Criteria.where(field).lte(Float.parseFloat(v)));
+                break;
+            case GT:
+                query.addCriteria(Criteria.where(field).gt(Float.parseFloat(v)));
+                break;
+            case GTE:
+                query.addCriteria(Criteria.where(field).gte(Float.parseFloat(v)));
+                break;
+        }
         return query;
     }
 
@@ -105,5 +105,14 @@ public class ElementRepository {
         // jacksonMapper node des data
         Query query = queryEquals("_id", elementId);
         return mongoTemplate.remove(query, model.getName().substring(model.getPackageName().length() + 1));
+    }
+
+    public String getOrCreateCollection(String collectionName) {
+        if (mongoTemplate.collectionExists(collectionName)) {
+            mongoTemplate.getCollection(collectionName);
+        } else {
+            mongoTemplate.createCollection(collectionName);
+        }
+        return collectionName;
     }
 }

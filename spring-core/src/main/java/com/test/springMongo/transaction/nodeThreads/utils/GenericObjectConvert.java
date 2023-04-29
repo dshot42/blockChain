@@ -1,4 +1,4 @@
-package com.test.springMongo.transaction.consensus.nodeThreads.utils;
+package com.test.springMongo.transaction.nodeThreads.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

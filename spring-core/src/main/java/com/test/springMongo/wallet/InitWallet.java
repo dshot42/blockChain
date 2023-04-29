@@ -1,7 +1,5 @@
 package com.test.springMongo.wallet;
 
-import com.chiffrement.ChiffrementUtils;
-import com.test.springMongo.models.PrivateWallet;
 import com.test.springMongo.models.PublicWallet;
 
 public class InitWallet {
@@ -9,7 +7,7 @@ public class InitWallet {
 
     static {
         try {
-            sellerWallet = new PublicWallet("127.0.0.1:9999", "Seller");
+            sellerWallet = new PublicWallet("127.0.0.1:8889", "Seller");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -19,7 +17,7 @@ public class InitWallet {
 
     static {
         try {
-                buyerWallet = new PublicWallet("127.0.0.1:9998","Buyer");
+            buyerWallet = new PublicWallet("127.0.0.1:8888", "Buyer");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

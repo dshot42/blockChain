@@ -1,7 +1,7 @@
 package com.test.springMongo.models;
 
 
-public class CryptedTransaction {
+public class TransactionContainerToEmit {
 
     String state; // enum => ack, sendTransaction, feedBack (retour donnée)
     PublicWallet receiverAddress;
@@ -9,15 +9,26 @@ public class CryptedTransaction {
     PublicWallet senderAddress;
 
     String cryptedTransaction; // transaction
-    String hash; // hash de cryptedTransaction
+    String cryptedTransactionHash; // hash de cryptedTransaction
 
     String immutableHash; // hash de la transaction retourné par la blockchain
+
+    String blockHash; // hash du block // le immutable
 
     String dateTime;
 
     byte[] key; // uniquement sur les retours !
 
-    String blockHash; // hash du block // le immutable
+    float amount;
+
+
+    public float getAmount() {
+        return amount;
+    }
+
+    public void setAmount(float amount) {
+        this.amount = amount;
+    }
 
     public PublicWallet getReceiverAddress() {
         return receiverAddress;
@@ -35,12 +46,12 @@ public class CryptedTransaction {
         this.cryptedTransaction = cryptedTransaction;
     }
 
-    public String getHash() {
-        return hash;
+    public String getCryptedTransactionHash() {
+        return cryptedTransactionHash;
     }
 
-    public void setHash(String hash) {
-        this.hash = hash;
+    public void setCryptedTransactionHash(String cryptedTransactionHash) {
+        this.cryptedTransactionHash = cryptedTransactionHash;
     }
 
     public byte[] getKey() {

@@ -1,14 +1,15 @@
-package com.test.springMongo.transaction.consensus.nodeThreads.utils;
+package com.test.springMongo.transaction.nodeThreads.utils;
 
 import com.chiffrement.ChiffrementUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.test.springMongo.models.CryptedTransaction;
+import com.test.springMongo.models.PublicWallet;
 import com.test.springMongo.models.Transaction;
+import com.test.springMongo.models.TransactionContainerToEmit;
 import com.test.springMongo.system.mongoDb.repository.ElementRepository;
 import com.test.springMongo.system.mongoDb.service.SequenceGeneratorService;
-import com.test.springMongo.transaction.consensus.nodeThreads.RunnableThreadProcess;
 import com.test.springMongo.transaction.initTransaction.initBlockChain.CreateBlockChain;
+import com.test.springMongo.transaction.nodeThreads.RunnableThreadProcess;
 import com.test.springMongo.wallet.personalWalletHandler.PrivateWalletHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,7 @@ import java.util.List;
 import java.util.Random;
 
 @Component
-public class NodeUtils {
+public class TransactionUtils {
 
     public static int nodeValidatorLvl = 5; // 5 membres (thread) relais
 
@@ -43,14 +44,14 @@ public class NodeUtils {
     SequenceGeneratorService sequenceGeneratorService;
 
 
-    public String hashTransaction(String transactioneas) throws Exception {
-        return ChiffrementUtils.generateHashKey(transactioneas);
+    public String hashTransaction(String transactionasString) throws Exception {
+        return ChiffrementUtils.generateHashKey(transactionasString);
     }
 
-    public CryptedTransaction jsonToCryptedTransaction(String datas) throws JsonProcessingException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    public TransactionContainerToEmit jsonToCryptedTransaction(String datas) throws JsonProcessingException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 
         ObjectMapper objectMapper = new ObjectMapper();
-        CryptedTransaction transaction = objectMapper.readValue(datas, CryptedTransaction.class);
+        TransactionContainerToEmit transaction = objectMapper.readValue(datas, TransactionContainerToEmit.class);
         return transaction;
     }
 
@@ -59,6 +60,7 @@ public class NodeUtils {
     }
 
     public void socketEmitToNextThread(String member, String cryptedTransaction2String) throws Exception {
+        System.out.println("next ! " + member);
         Socket socket = new Socket(member.split(":")[0], Integer.parseInt(member.split(":")[1]));
         OutputStream output = socket.getOutputStream();
         byte[] data = cryptedTransaction2String.getBytes();
@@ -87,22 +89,29 @@ public class NodeUtils {
     }
 
 
-    public void sendCryptedTransactionOnNode(String cryptedTransactiondata) throws Exception {
+    public void
+
+
+    emitCryptedTransactionOnNode(String cryptedTransactiondata) throws Exception {
         String firstMember = getRandomNextNodeMember();
         startNextNodeMemberThread(firstMember);
         Thread.sleep(100); // le temps de demarrer la socket d'écoute
         socketEmitToNextThread(firstMember, cryptedTransactiondata);
     }
 
-    public static void persistTransactionOnWallet(CryptedTransaction cryptedTransaction,byte[] privateKey,  String idWallet) throws Exception {
+    public static void persistTransactionOnWallet(TransactionContainerToEmit cryptedTransaction, byte[] privateKey, PublicWallet publicWallet) throws Exception {
 
         Transaction transaction = Transaction.class.cast(GenericObjectConvert
-                .stringToObject(ChiffrementUtils.decryptAES(cryptedTransaction.getCryptedTransaction(),privateKey), Transaction.class));
+                .stringToObject(ChiffrementUtils.decryptAES(cryptedTransaction.getCryptedTransaction(), ChiffrementUtils.systemKey), Transaction.class));
 
-        PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler(idWallet);
+        persistTransactionOnWallet(transaction, privateKey, publicWallet);
+    }
 
+    public static void persistTransactionOnWallet(Transaction transaction, byte[] privateKey, PublicWallet publicWallet) throws Exception {
+
+        PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler(publicWallet.getAddress(), publicWallet.getUniqueWalletId());
         privateWalletHandler.insertNewTransaction(transaction);
-        System.out.println(privateWalletHandler.getWallet().getTransactions());
+        System.out.println("new Transaction inserted into the user's wallet : " + publicWallet.getUniqueWalletId());
     }
 
     public static Class<?> getClassForName(String element) throws ClassNotFoundException {

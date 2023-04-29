@@ -3,12 +3,15 @@ package com.test.springMongo.transaction.buyer;
 import com.chiffrement.ChiffrementUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.test.springMongo.models.CryptedTransaction;
 import com.test.springMongo.models.PrivateWallet;
 import com.test.springMongo.models.Transaction;
-import com.test.springMongo.transaction.consensus.nodeThreads.utils.GenericObjectConvert;
-import com.test.springMongo.transaction.consensus.nodeThreads.utils.NodeUtils;
+import com.test.springMongo.models.TransactionContainerToEmit;
+import com.test.springMongo.transaction.consensus.ConsensusThreadProcess;
+import com.test.springMongo.transaction.consensus.ConsensusUtils;
+import com.test.springMongo.transaction.nodeThreads.utils.GenericObjectConvert;
+import com.test.springMongo.transaction.nodeThreads.utils.TransactionUtils;
 import com.test.springMongo.wallet.InitWallet;
+import com.test.springMongo.wallet.personalWalletHandler.PrivateWalletHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,19 +20,21 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Random;
 
 @Component
 public class SendTransactionProcess implements Runnable { // processus de l'acheteur
 
     @Autowired
-    NodeUtils nodeUtils;
+    TransactionUtils nodeUtils;
 
     private static PrintWriter out;
     private static BufferedReader in;
 
     private PrivateWallet privateWallet;
 
+    private byte[] walletKey = {-95, -14, 120, 61, 45, 104, 101, -13, -98, -20, -69, -41,
+            -97, 83, 46, 75, -104, 105, -3, 111, -125, -90, -11,
+            -8, 60, 69, 38, -33, 78, 55, -65, 104};
     public static byte[] privateKeyCache;
 
     public void run() {
@@ -50,27 +55,31 @@ public class SendTransactionProcess implements Runnable { // processus de l'ache
     }
 
 
-    public String generateCryptedTransaction(CryptedTransaction ackTransaction) throws Exception {
+    public String generateCryptedTransaction(TransactionContainerToEmit ackTransaction, byte[] privateKeyCache) throws Exception {
 
         Transaction transaction = MapperTransaction(ackTransaction);
+        String transactionJson = GenericObjectConvert.objectToString(transaction);
+   //     transaction.setHash(ChiffrementUtils.cryptAES(transactionJson));
 
-        CryptedTransaction sendTransaction = new CryptedTransaction();
+        TransactionContainerToEmit sendTransaction = new TransactionContainerToEmit();
         sendTransaction.setReceiverAddress(ackTransaction.getSenderAddress());
         // laddresse de m'émeteur devient laddresse du recepteur
-        String transactionJson = GenericObjectConvert.objectToString(transaction);
-        privateKeyCache = ackTransaction.getKey();
+
         sendTransaction.setCryptedTransaction(ChiffrementUtils.cryptAES(transactionJson, privateKeyCache));
-        sendTransaction.setHash(ChiffrementUtils.generateHashKey(sendTransaction.getCryptedTransaction()));
-        sendTransaction.setState("SENDTRANSACTION");
+        sendTransaction.setCryptedTransactionHash(ChiffrementUtils.generateHashKey(sendTransaction.getCryptedTransaction()));
+        sendTransaction.setState("SYNACK");
         return GenericObjectConvert.objectToString(sendTransaction);
     }
 
-    private static Transaction MapperTransaction(CryptedTransaction askTransaction) {
+    private static Transaction MapperTransaction(TransactionContainerToEmit askTransaction) {
         Transaction transaction = new Transaction();
         transaction.setReceiverAddress(askTransaction.getSenderAddress()); // address communiqué
-        transaction.setSenderAddress(InitWallet.buyerWallet); // this thread
-        Random random = new Random();
-        transaction.setAmount(random.nextInt(1000));
+        PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler(InitWallet.buyerWallet.getAddress(), InitWallet.buyerWallet.getUniqueWalletId());
+
+        PrivateWallet myPrivateWallet = privateWalletHandler.getWallet();
+
+        transaction.setSenderAddress(privateWalletHandler.mapPrivateToPublicWaller(myPrivateWallet)); // this thread
+        transaction.setAmount(askTransaction.getAmount());
         transaction.setDateTime(askTransaction.getDateTime());
         return transaction;
     }
@@ -78,30 +87,50 @@ public class SendTransactionProcess implements Runnable { // processus de l'ache
 
     public void socketClientStart() throws Exception {
         ServerSocket serverSocket = new ServerSocket(Integer.parseInt(InitWallet.buyerWallet.getAddress().split(":")[1]));
-        Socket clientSocket = serverSocket.accept();
-        out = new PrintWriter(clientSocket.getOutputStream(), true);
-        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        String datas = in.readLine();
-        // if accepte => send
-        CryptedTransaction cryptedTransaction = getAckTransaction(datas);
+        while (true) {
+            Socket clientSocket = serverSocket.accept();
+            out = new PrintWriter(clientSocket.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            String datas = in.readLine();
 
-        if (cryptedTransaction.getState().equals("ACK")) {
-            System.out.println("ACK receive");
-            nodeUtils.sendCryptedTransactionOnNode(generateCryptedTransaction(cryptedTransaction));
-        } else if (cryptedTransaction.getState().equals("FEEDBACK")) { //  state = feedback
-            System.out.println("FEEDBACK receive");
-            nodeUtils.persistTransactionOnWallet(cryptedTransaction, privateKeyCache, "Buyer");
-            System.out.println("Fin de la transaction ! ");
+            TransactionContainerToEmit cryptedTransaction = nodeUtils.jsonToCryptedTransaction(datas);
+            if (cryptedTransaction.getState().equals("SYN")) { //  demande de transaction
+                System.out.println("SYNC receive");
+                // todo important ! mes 2 scenario !!!!
+                nodeUtils.emitCryptedTransactionOnNode(generateCryptedTransaction(cryptedTransaction, cryptedTransaction.getKey()));
+               Thread.sleep(10000); // on wait 10 sec avant pour pas avoir de souci d'asynchrone
+                emitBroadcastCryptedTransactionOnConsensus(generateCryptedTransaction(cryptedTransaction, ChiffrementUtils.systemKey)); // systeme key
+            } else if (cryptedTransaction.getState().equals("ACK")) { //  retour apres persistance block chaine
+                ConsensusUtils.systemConsensusAckFeedBackTransactionPersisted(InitWallet.buyerWallet, walletKey, nodeUtils, cryptedTransaction);
+                System.out.println("Fin de la transaction par Consensus ! (SENDER)");
+            }
         }
-        serverSocket.close();
-        socketClientStart();
     }
 
 
-    public CryptedTransaction getAckTransaction(String datas) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        CryptedTransaction transaction = objectMapper.readValue(datas, CryptedTransaction.class);
-        return transaction;
+    /////////////////////////  SYSTEME PAR CONSENSUS  /////////////////////////
+
+    public void emitBroadcastCryptedTransactionOnConsensus(String cryptedTransactiondata) throws Exception {
+
+        ConsensusUtils.sendTransactionToBlockChainSystem(cryptedTransactiondata);
+
+        int i = 0;
+        int numberConsensusMember = 5;
+
+        while (i != 5) {
+            String consensusMember = nodeUtils.getRandomNextNodeMember();
+            startNextConsensusMemberThread(consensusMember);
+            Thread.sleep(100); // le temps de demarrer la socket d'écoute
+            nodeUtils.socketEmitToNextThread(consensusMember, cryptedTransactiondata);
+            i++;
+        }
     }
+
+    public void startNextConsensusMemberThread(String thisMember) throws Exception {
+        ConsensusThreadProcess nodeMember = new ConsensusThreadProcess(thisMember, nodeUtils);
+        Thread t = new Thread(nodeMember);
+        t.start();
+    }
+
 
 }

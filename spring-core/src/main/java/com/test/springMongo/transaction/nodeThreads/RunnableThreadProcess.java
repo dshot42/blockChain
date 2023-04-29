@@ -1,8 +1,8 @@
-package com.test.springMongo.transaction.consensus.nodeThreads;
+package com.test.springMongo.transaction.nodeThreads;
 
-import com.test.springMongo.models.CryptedTransaction;
-import com.test.springMongo.transaction.consensus.nodeThreads.utils.GenericObjectConvert;
-import com.test.springMongo.transaction.consensus.nodeThreads.utils.NodeUtils;
+import com.test.springMongo.models.TransactionContainerToEmit;
+import com.test.springMongo.transaction.nodeThreads.utils.GenericObjectConvert;
+import com.test.springMongo.transaction.nodeThreads.utils.TransactionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.BufferedReader;
@@ -24,14 +24,14 @@ public class RunnableThreadProcess implements Runnable { // membre du jury
 
     public String nextMember;
 
-    public NodeUtils nodeUtils;
+    public TransactionUtils nodeUtils;
 
     public boolean isReady = false;
 
     private static int cptMember = 0;
 
     @Autowired
-    public RunnableThreadProcess(String ip, String nextMember, NodeUtils consensusSocketUtils) {
+    public RunnableThreadProcess(String ip, String nextMember, TransactionUtils consensusSocketUtils) {
         this.ip = ip;
         this.nextMember = nextMember;
         this.nodeUtils = consensusSocketUtils;
@@ -57,13 +57,13 @@ public class RunnableThreadProcess implements Runnable { // membre du jury
         out = new PrintWriter(clientSocket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-        CryptedTransaction cryptedTransaction = nodeUtils.jsonToCryptedTransaction(in.readLine());
+        TransactionContainerToEmit cryptedTransaction = nodeUtils.jsonToCryptedTransaction(in.readLine());
         String thisHash = nodeUtils.hashTransaction(cryptedTransaction.getCryptedTransaction());
 
-        if (nodeUtils.checkValidation(cryptedTransaction.getHash(), thisHash)) {
+        if (nodeUtils.checkValidation(cryptedTransaction.getCryptedTransactionHash(), thisHash)) {
 
-            System.out.println(ip + " a validé l'intégrité avec succes {" + thisHash + "}");
-            if (cptMember < NodeUtils.nodeValidatorLvl) {
+            System.out.println(ip + " a valide l'intégrite de la transaction {" + thisHash + "} avec succes ");
+            if (cptMember < TransactionUtils.nodeValidatorLvl) {
                 nodeUtils.startNextNodeMemberThread(nextMember); // start next Thread
                 Thread.sleep(100); // cela serait mieux avec un ack, verifier que les socket member sont ready !
 
@@ -79,7 +79,7 @@ public class RunnableThreadProcess implements Runnable { // membre du jury
         cptMember++;
     }
 
-    private void sendToFinalDestinator(CryptedTransaction cryptedTransaction, String cryptedTransationToString) throws Exception {
+    private void sendToFinalDestinator(TransactionContainerToEmit cryptedTransaction, String cryptedTransationToString) throws Exception {
         nodeUtils.socketEmitToNextThread(cryptedTransaction.getReceiverAddress().getAddress(), cryptedTransationToString);
     }
 

@@ -16,7 +16,7 @@ import javax.validation.Valid;
 //@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/MongoDb")
-public class MongoController {
+public class MongoWebServiceController {
 
     @Autowired
     ElementRepository elementService;

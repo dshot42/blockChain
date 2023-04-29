@@ -3,7 +3,7 @@ package com.test.springMongo.wallet.personalWalletHandler;
 import com.chiffrement.ChiffrementUtils;
 import com.test.springMongo.models.PrivateWallet;
 import com.test.springMongo.models.Transaction;
-import com.test.springMongo.transaction.consensus.nodeThreads.utils.GenericObjectConvert;
+import com.test.springMongo.transaction.nodeThreads.utils.GenericObjectConvert;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -50,7 +50,7 @@ public class WalletService {
                 amount += t.getAmount();
         }
 
-        System.out.println("Montant total du wallet ! " + amount);
+        System.out.println("Montant total du wallet : " + amount);
         return amount;
     }
 

@@ -4,6 +4,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Objects;
+
 @Document("Transaction")
 public class Transaction {
 
@@ -108,4 +110,15 @@ public class Transaction {
     public void setIdBlock(Long idBlock) {
         this.idBlock = idBlock;
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Transaction that = (Transaction) o;
+        return Float.compare(that.amount, amount) == 0 && Objects.equals(id, that.id) && Objects.equals(idParent, that.idParent) && Objects.equals(senderAddress, that.senderAddress) && Objects.equals(receiverAddress, that.receiverAddress) && Objects.equals(hash, that.hash) && Objects.equals(immutableChainedHash, that.immutableChainedHash) && Objects.equals(dateTime, that.dateTime) && Objects.equals(blockHash, that.blockHash) && Objects.equals(idBlock, that.idBlock);
+    }
+
+
 }

@@ -2,9 +2,9 @@ package com.test.springMongo.wallet.personalWalletHandler;
 
 import com.chiffrement.ChiffrementUtils;
 import com.test.springMongo.models.PrivateWallet;
+import com.test.springMongo.models.PublicWallet;
 import com.test.springMongo.models.Transaction;
-import com.test.springMongo.transaction.consensus.nodeThreads.utils.GenericObjectConvert;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.test.springMongo.transaction.nodeThreads.utils.GenericObjectConvert;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedWriter;
@@ -15,6 +15,7 @@ import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 @Component
 public class PrivateWalletHandler {
@@ -30,18 +31,17 @@ public class PrivateWalletHandler {
     private String filePath;
 
 
-
     public PrivateWalletHandler() {
     }
 
-    public PrivateWalletHandler(String id) {
+    public PrivateWalletHandler(String address , String id) {
         this.id = id;
         this.address = address;
         this.filePath = "C:\\Users\\Come\\IdeaProjects\\crypto-block-chain\\spring-core\\src\\main\\resources\\" + "wallet\\wallet" + this.id + ".txt";
         ;
     }
 
-    public boolean testWallet () {
+    public boolean testWallet() {
         PrivateWallet privateWallet = getWallet();
         WalletService.getAmount(privateWallet);
         return WalletService.checkIntegrity(privateWallet);
@@ -58,7 +58,7 @@ public class PrivateWalletHandler {
         if (walletData.isEmpty()) {
             //create new unique wallet
             try {
-                personnalWallet = new PrivateWallet("127.0.0.1:4444", id);
+                personnalWallet = new PrivateWallet(address, id);
                 persistWallet(file, personnalWallet);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -74,8 +74,8 @@ public class PrivateWalletHandler {
         return personnalWallet;
     }
 
-    public void insertNewTransaction( Transaction transaction) throws Exception {
-       PrivateWallet privateWallet =  getWallet();
+    public void insertNewTransaction(Transaction transaction) throws Exception {
+        PrivateWallet privateWallet = getWallet();
         List<Transaction> oldTransac = privateWallet.getTransactions();
 
         if (oldTransac == null) oldTransac = new LinkedList<>();
@@ -121,10 +121,29 @@ public class PrivateWalletHandler {
 
     public PrivateWallet persistWallet(File file, PrivateWallet personnalWallet) throws Exception {
         String cryptedWall = ChiffrementUtils.cryptAES(GenericObjectConvert.objectToString(personnalWallet), walletPrivateKey);
-        BufferedWriter  fileWriter = new BufferedWriter(new FileWriter(file, false));
+        BufferedWriter fileWriter = new BufferedWriter(new FileWriter(file, false));
         fileWriter.write(cryptedWall);
         fileWriter.close();
         return personnalWallet;
+    }
+
+    public PublicWallet mapPrivateToPublicWaller(PrivateWallet privateWallet) {
+        if (privateWallet.getTransactions() == null) {
+            return new PublicWallet(privateWallet.getAddress()
+                    , privateWallet.getUniqueWalletId());
+        }
+
+        List<Transaction> publicTransacList = privateWallet.getTransactions().stream().map(t -> {
+            Transaction publicTransac = new Transaction();
+            publicTransac.setHash(t.getHash());
+            publicTransac.setBlockHash(t.getBlockHash());
+            publicTransac.setImmutableChainedHash(t.getImmutableChainedHash());
+            return publicTransac;
+        }).collect(Collectors.toList());
+
+
+        return new PublicWallet(privateWallet.getAddress()
+                , privateWallet.getUniqueWalletId(), publicTransacList);
     }
 
 
