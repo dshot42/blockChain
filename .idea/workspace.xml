@@ -5,6 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c1a40880-6b52-4b3a-aad7-659c72ee6de1" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/checksums/checksums.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/checksums/md5-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/checksums/sha1-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/dependencies-accessors/dependencies-accessors.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/dependencies-accessors/dependencies-accessors.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.bin" afterDir="false" />
@@ -12,7 +17,56 @@
       <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chiffrement-utils/build/classes/java/main/com/chiffrement/ChiffrementUtils.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/chiffrement-utils/build/classes/java/main/com/chiffrement/EncryptData.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/chiffrement-utils/build/libs/chiffrement-utils.jar" beforeDir="false" afterPath="$PROJECT_DIR$/chiffrement-utils/build/libs/chiffrement-utils.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chiffrement-utils/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/chiffrement-utils/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chiffrement-utils/src/main/java/blockChain/chiffrement/ChiffrementUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/chiffrement-utils/src/main/java/blockChain/chiffrement/ChiffrementUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chiffrement-utils/src/main/java/blockChain/chiffrement/EncryptData.java" beforeDir="false" afterPath="$PROJECT_DIR$/chiffrement-utils/src/main/java/blockChain/chiffrement/EncryptData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/spring-core/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/SpringMongoApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/SpringMongoApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/system/mongoDb/controller/BlockChainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/system/mongoDb/controller/BlockChainController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/system/mongoDb/controller/MongoWebServiceController.java" beforeDir="false" afterPath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/system/mongoDb/controller/MongoWebServiceController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/system/mongoDb/service/BlockChainService.java" beforeDir="false" afterPath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/system/mongoDb/service/BlockChainService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/system/mongoDb/webSocket/MongoWebConsensusListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/system/mongoDb/webSocket/MongoWebConsensusListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/transaction/buyer/SendTransactionProcess.java" beforeDir="false" afterPath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/transaction/buyer/SendTransactionProcess.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/transaction/consensus/ConsensusUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/transaction/consensus/ConsensusUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/transaction/nodeThreads/utils/TransactionUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/transaction/nodeThreads/utils/TransactionUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/transaction/seller/AckAndReceiveTransactionProcess.java" beforeDir="false" afterPath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/transaction/seller/AckAndReceiveTransactionProcess.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/wallet/personalWalletHandler/PrivateWalletHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/wallet/personalWalletHandler/PrivateWalletHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/wallet/personalWalletHandler/WalletService.java" beforeDir="false" afterPath="$PROJECT_DIR$/spring-core/src/main/java/blockChain/wallet/personalWalletHandler/WalletService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/SpringMongoApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/models/Block.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/models/PrivateWallet.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/models/PublicWallet.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/models/Transaction.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/models/TransactionContainerToEmit.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/system/mongoDb/controller/BlockChainController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/system/mongoDb/controller/MongoWebServiceController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/system/mongoDb/criteriaFilter/CriteriaFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/system/mongoDb/repository/BlockChainRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/system/mongoDb/repository/ElementRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/system/mongoDb/sequence/MongoSequence.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/system/mongoDb/service/BlockChainService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/system/mongoDb/service/DateUtils.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/system/mongoDb/service/SequenceGeneratorService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/system/mongoDb/webSocket/MongoWebConsensusListener.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/transaction/buyer/SendTransactionProcess.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/transaction/consensus/ConsensusThreadProcess.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/transaction/consensus/ConsensusUtils.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/transaction/initTransaction/initBlockChain/CreateBlockChain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/transaction/nodeThreads/RunnableThreadProcess.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/transaction/nodeThreads/utils/GenericObjectConvert.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/transaction/nodeThreads/utils/TransactionUtils.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/transaction/seller/AckAndReceiveTransactionProcess.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/wallet/InitWallet.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/wallet/personalWalletHandler/PrivateWalletHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/wallet/personalWalletHandler/WalletService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/resources/wallet/walletBuyer.txt" beforeDir="false" afterPath="$PROJECT_DIR$/spring-core/src/main/resources/wallet/walletBuyer.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/main/resources/wallet/walletSeller.txt" beforeDir="false" afterPath="$PROJECT_DIR$/spring-core/src/main/resources/wallet/walletSeller.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spring-core/src/test/java/com/test/springMongo/SpringMongoApplicationTests.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,38 +112,43 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2OnUBEwHEQnUVOfyoqorZsJTfP2" />
-  <component name="ProjectLevelVcsManager">
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "jdk.selected.JAVA_MODULE": "11",
-    "last_opened_file_path": "C:/Users/Come/IdeaProjects/crypto-block-chain/spring-core/src/main/java/com/test/springMongo/system/mongoDb/repository",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "reference.projectsettings.compiler.javacompiler"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;11&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Come/IdeaProjects/crypto-block-chain/spring-core/src/main/java/com/test/springMongo/system/mongoDb/repository&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Come\IdeaProjects\crypto-block-chain\spring-core\src\main\java\com\test\springMongo\system\mongoDb\repository" />
       <recent name="C:\Users\Come\IdeaProjects\crypto-block-chain\spring-core\src\main\resources" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Come\IdeaProjects\crypto-block-chain" />
       <recent name="C:\Users\Come\IdeaProjects\crypto-block-chain\spring-core\src\main\resources\wallet" />
     </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="" />
+    </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.test.springMongo.system.mongoDb" />
+      <recent name="com.test.springMongo.transaction.consensus" />
       <recent name="com.test.springMongo.transaction.personalWalletHandler" />
       <recent name="com.test.springMongo.transaction.seller" />
       <recent name="com.test.springMongo.models" />
-      <recent name="com.test.springMongo.transaction" />
     </key>
   </component>
   <component name="RunManager">
@@ -162,34 +221,64 @@
       </map>
     </option>
   </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/spring-core" />
+    </ignored-roots>
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/wallet/personalWalletHandler/PrivateWalletHandler.java</url>
-          <line>112</line>
+          <url>file://$PROJECT_DIR$/spring-core/src/main/java/blockChain/wallet/personalWalletHandler/PrivateWalletHandler.java</url>
+          <line>120</line>
           <option name="timeStamp" value="88" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/system/mongoDb/service/BlockChainService.java</url>
-          <line>75</line>
-          <option name="timeStamp" value="150" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/transaction/consensus/nodeThreads/utils/NodeUtils.java</url>
-          <line>98</line>
+          <url>file://$PROJECT_DIR$/spring-core/src/main/java/blockChain/transaction/nodeThreads/utils/TransactionUtils.java</url>
+          <line>105</line>
           <option name="timeStamp" value="151" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/spring-core/src/main/java/com/test/springMongo/wallet/personalWalletHandler/WalletService.java</url>
-          <line>46</line>
-          <option name="timeStamp" value="154" />
+          <url>file://$PROJECT_DIR$/spring-core/src/main/java/blockChain/transaction/seller/AckAndReceiveTransactionProcess.java</url>
+          <line>152</line>
+          <option name="timeStamp" value="181" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/spring-core/src/main/java/blockChain/system/mongoDb/service/BlockChainService.java</url>
+          <line>128</line>
+          <option name="timeStamp" value="221" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/spring-core/src/main/java/blockChain/system/mongoDb/service/BlockChainService.java</url>
+          <line>134</line>
+          <option name="timeStamp" value="222" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/spring-core/src/main/java/blockChain/system/mongoDb/service/BlockChainService.java</url>
+          <line>156</line>
+          <option name="timeStamp" value="238" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/spring-core/src/main/java/blockChain/wallet/personalWalletHandler/WalletService.java</url>
+          <line>30</line>
+          <option name="timeStamp" value="240" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/spring-core/src/main/java/blockChain/system/mongoDb/service/BlockChainService.java</url>
+          <line>81</line>
+          <option name="timeStamp" value="241" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/spring-core/src/main/java/blockChain/system/mongoDb/service/BlockChainService.java</url>
+          <line>78</line>
+          <option name="timeStamp" value="243" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="GradleRunConfiguration">
-        <watch expression="immutableHashTransaction" />
+        <watch expression="immutableHashTransaction" language="JAVA" />
       </configuration>
     </watches-manager>
   </component>

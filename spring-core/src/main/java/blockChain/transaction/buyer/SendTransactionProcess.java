@@ -110,12 +110,9 @@ public class SendTransactionProcess implements Runnable { // processus de l'ache
 
     public void emitBroadcastCryptedTransactionOnConsensus(String cryptedTransactiondata) throws Exception {
 
-        ConsensusUtils.sendTransactionToBlockChainSystem(cryptedTransactiondata);
-
         int i = 0;
-        int numberConsensusMember = 5;
 
-        while (i != 5) {
+        while (i != ConsensusUtils.numberConsensusMember) {
             String consensusMember = nodeUtils.getRandomNextNodeMember();
             startNextConsensusMemberThread(consensusMember);
             Thread.sleep(100); // le temps de demarrer la socket d'écoute

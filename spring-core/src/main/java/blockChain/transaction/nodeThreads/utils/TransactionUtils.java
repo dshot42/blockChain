@@ -43,6 +43,11 @@ public class TransactionUtils {
     @Autowired
     SequenceGeneratorService sequenceGeneratorService;
 
+    public static byte[] transactionPrivateKey = new byte[]
+            {-95, -14, 120, 61, 45, 104, 101, -13, -98, -20, -69, -41,
+                    -97, 83, 46, 75, -104, 105, -3, 111, -125, -90, -11,
+                    -8, 60, 69, 38, -33, 78, 55, -65, 104};
+
 
     public String hashTransaction(String transactionasString) throws Exception {
         return ChiffrementUtils.generateHashKey(transactionasString);

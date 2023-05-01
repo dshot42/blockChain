@@ -7,7 +7,7 @@ plugins {
 
 
 application {
-	mainClass = 'com.test.springMongo.SpringMongoApplication'
+	mainClass = 'blockChain.SpringMongoApplication'
 }
 
 
@@ -19,18 +19,24 @@ repositories {
 }
 
 dependencies {
+
+	project(":chiffrement-utils")
+
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
 	implementation project(path: ':chiffrement-utils')
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
 	implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5'
 
-	 project(":chiffrement-utils")
+	/////////////// communication to nodejs front end ///////////////
+
+	implementation('io.socket:socket.io-client:2.0.0')
 }
+
 
 tasks.named('test') {
 //	useJUnitPlatform()

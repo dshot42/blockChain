@@ -3,6 +3,7 @@ package blockChain.system.mongoDb.webSocket;
 
 import blockChain.chiffrement.ChiffrementUtils;
 import blockChain.system.mongoDb.service.BlockChainService;
+import blockChain.transaction.consensus.ConsensusUtils;
 import blockChain.transaction.nodeThreads.utils.GenericObjectConvert;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import blockChain.models.Transaction;
@@ -44,8 +45,6 @@ public class MongoWebConsensusListener implements Runnable {
 
     private static Map<String, List<String>> consensusReceipeHash = new HashMap<>();
 
-    private int numberReceipeNeeded = 6; // member + le sender
-
 
     @Override
     public void run() {
@@ -83,7 +82,7 @@ public class MongoWebConsensusListener implements Runnable {
         listHash.add(cryptedTransaction.getCryptedTransactionHash());
         consensusReceipeHash.put(transaction2string, listHash);
 
-        if (consensusReceipeHash.get(transaction2string).size() == numberReceipeNeeded) {
+        if (consensusReceipeHash.get(transaction2string).size() == ConsensusUtils.numberConsensusMember) {
             boolean isValidated = checkConsensusValidity(transaction, consensusReceipeHash.get(transaction2string));
             if (isValidated) {
                 System.out.println("Consensus System : validation de la transaction par le consensus ! ");

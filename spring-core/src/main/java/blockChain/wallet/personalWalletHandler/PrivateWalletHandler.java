@@ -7,10 +7,8 @@ import blockChain.models.Transaction;
 import blockChain.transaction.nodeThreads.utils.GenericObjectConvert;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.*;
+import java.net.Socket;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.LinkedList;
@@ -35,24 +33,34 @@ public class PrivateWalletHandler {
     public PrivateWalletHandler() {
     }
 
+
+    public PrivateWalletHandler(String id) {
+        this.id = id;
+        this.filePath = Paths.get("").toAbsolutePath() + DIRECTORY + "wallet/wallet" + this.id + ".txt";
+    }
+
     public PrivateWalletHandler(String address, String id) {
         this.id = id;
         this.address = address;
         this.filePath = Paths.get("").toAbsolutePath() + DIRECTORY + "wallet/wallet" + this.id + ".txt";
     }
 
-    public boolean testWallet() {
+    public boolean testWallet() throws Exception {
         PrivateWallet privateWallet = getWallet();
         WalletService.getAmount(privateWallet);
+        privateWallet = persistWallet(new File(filePath), WalletService.bindPublicToPrivateTransaction(WalletService.getAllTransation(privateWallet), privateWallet));
         return WalletService.checkIntegrity(privateWallet);
+    }
+
+    public PrivateWallet refreshWallet() throws Exception { // on va send 2 fois une fois en webservice et une fois en socket : petit bug ! on devrait  passer emit socket en callbak
+        PrivateWallet privateWallet = getWallet();
+        return persistWallet(new File(filePath), WalletService.bindPublicToPrivateTransaction(WalletService.getAllTransation(privateWallet), privateWallet));
     }
 
     public PrivateWallet getWallet() {
 
         File file = new File(filePath);
-
         String walletData = readWalletFile(file);
-
         PrivateWallet personnalWallet = null;
 
         if (walletData.isEmpty()) {
@@ -122,8 +130,23 @@ public class PrivateWalletHandler {
         BufferedWriter fileWriter = new BufferedWriter(new FileWriter(file, false));
         fileWriter.write(cryptedWall);
         fileWriter.close();
+        socketEmitRefreshWalletAfterTransaction(personnalWallet);
+        // todo ! ! ! ! ! !
         return personnalWallet;
     }
+
+    public void socketEmitRefreshWalletAfterTransaction(PrivateWallet privateWallet) throws Exception {
+
+        Socket socket = new Socket("127.0.0.1", 3000);
+        OutputStream output = socket.getOutputStream();
+        byte[] data = GenericObjectConvert.objectToString(privateWallet).getBytes();
+        output.write(data);
+        PrintWriter writer = new PrintWriter(output, true);
+        writer.println();
+        System.out.println("Send wallet data to client front end ");
+
+    }
+
 
     public PublicWallet mapPrivateToPublicWaller(PrivateWallet privateWallet) {
         if (privateWallet.getTransactions() == null) {
@@ -138,7 +161,6 @@ public class PrivateWalletHandler {
             publicTransac.setImmutableChainedHash(t.getImmutableChainedHash());
             return publicTransac;
         }).collect(Collectors.toList());
-
 
         return new PublicWallet(privateWallet.getAddress()
                 , privateWallet.getUniqueWalletId(), publicTransacList);

@@ -1,4 +1,4 @@
-package com.chiffrement;
+package blockChain.chiffrement;
 
 import java.util.Scanner;
 

@@ -2,10 +2,12 @@ package blockChain.wallet.personalWalletHandler;
 
 import blockChain.chiffrement.ChiffrementUtils;
 import blockChain.models.PrivateWallet;
+import blockChain.models.PublicWallet;
 import blockChain.models.Transaction;
 import blockChain.transaction.nodeThreads.utils.GenericObjectConvert;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -80,6 +82,42 @@ public class WalletService {
             System.out.println("Erreur lors de la communication avec le serveur, Check integrity of the transaction ");
         }
         return false;
+    }
+
+
+    public static PublicWallet getAllTransation(PrivateWallet privateWallet) {
+        PublicWallet publicWallet = null;
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+
+        HttpGet request = new HttpGet("http://localhost:8090/MongoDb/wallet/PublicWallet/uniqueWalletId/" + privateWallet.getUniqueWalletId());
+        request.addHeader("content-type", "application/json");
+        try {
+            CloseableHttpResponse response = httpClient.execute(request);
+            HttpEntity respEntity = response.getEntity();
+            String data = new BufferedReader(new InputStreamReader(respEntity.getContent(),
+                    StandardCharsets.UTF_8))
+                    .lines()
+                    .collect(Collectors.joining("\n"));
+
+            try {
+                publicWallet = PublicWallet.class.cast(GenericObjectConvert.stringToObject(data, PublicWallet.class));
+            } catch (Exception e) {
+                return null;
+            }
+
+        } catch (Exception e) {
+            System.out.println("Erreur lors de la communication avec le serveur, Refresh Wallet datas; ");
+        }
+        return publicWallet;
+    }
+
+
+    public static PrivateWallet bindPublicToPrivateTransaction(PublicWallet returnedPublicWallet, PrivateWallet myprivateWallet) {
+
+        if (returnedPublicWallet != null) {
+            myprivateWallet.setTransactions(returnedPublicWallet.getTransactions());
+        }
+        return myprivateWallet;
     }
 
 }

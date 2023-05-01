@@ -64,7 +64,7 @@ public class SpringMongoApplication {
         launchTransaction();
     }
 
-    private static void checkWallet() {
+    private static void checkWallet() throws Exception {
         PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler(InitWallet.buyerWallet.getAddress(), InitWallet.buyerWallet.getUniqueWalletId());
         privateWalletHandler.testWallet();
     }

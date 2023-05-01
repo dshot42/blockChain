@@ -54,10 +54,7 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
             {-95, -14, 120, 61, 45, 104, 101, -13, -98, -20, -69, -41,
                     -97, 83, 46, 75, -104, 105, -3, 111, -125, -90, -11,
                     -8, 60, 69, 38, -33, 78, 55, -65, 104};
-    private static byte[] transactionPrivateKey = new byte[]
-            {-95, -14, 120, 61, 45, 104, 101, -13, -98, -20, -69, -41,
-                    -97, 83, 46, 75, -104, 105, -3, 111, -125, -90, -11,
-                    -8, 60, 69, 38, -33, 78, 55, -65, 104};
+
 
     @Override
     public void run() {
@@ -94,7 +91,7 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
         PrivateWallet myPrivateWallet = privateWalletHandler.getWallet();
         askTransaction.setSenderAddress(privateWalletHandler.mapPrivateToPublicWaller(myPrivateWallet));
         askTransaction.setDateTime(LocalDateTime.now().toString());
-        askTransaction.setKey(transactionPrivateKey);
+        askTransaction.setKey(TransactionUtils.transactionPrivateKey);
         askTransaction.setState("SYN");
         Random random = new Random();
         askTransaction.setAmount(random.nextInt(1000));
@@ -116,7 +113,7 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
 
     public void doTransaction(TransactionContainerToEmit cryptedTransaction) { // jury final // seller => pousser sur la block chaine apres validation
         try {
-            String transaction2string = ChiffrementUtils.decryptAES(cryptedTransaction.getCryptedTransaction(), transactionPrivateKey);
+            String transaction2string = ChiffrementUtils.decryptAES(cryptedTransaction.getCryptedTransaction(), TransactionUtils.transactionPrivateKey);
             ObjectMapper objectMapper = new ObjectMapper();
             Transaction transaction = objectMapper.readValue(transaction2string, Transaction.class);
             String thisHash = ChiffrementUtils.cryptAES(transaction2string, ChiffrementUtils.systemKey);
@@ -178,7 +175,7 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
                     .collect(Collectors.joining("\n"));
 
             TransactionContainerToEmit returnedTransac = TransactionContainerToEmit.class.cast(GenericObjectConvert.stringToObject(data, TransactionContainerToEmit.class));
-            System.out.println("send transaction hash : {" + transaction.getHash() + "} to the block chain system with success ");
+            System.out.println("push transaction to the block chain system : web service ");
             emitFeedBackBlockChainToSender(returnedTransac);
 
         } catch (Exception e) {
@@ -189,7 +186,7 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
 
     public void emitFeedBackBlockChainToSender(TransactionContainerToEmit cryptedTransaction) throws Exception {
 
-        nodeUtils.persistTransactionOnWallet(cryptedTransaction, transactionPrivateKey, InitWallet.sellerWallet);
+        nodeUtils.persistTransactionOnWallet(cryptedTransaction, TransactionUtils.transactionPrivateKey, InitWallet.sellerWallet);
 
         String json = GenericObjectConvert.objectToString(cryptedTransaction);
 
