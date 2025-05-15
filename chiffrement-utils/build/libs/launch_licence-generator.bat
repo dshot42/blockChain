@@ -1,1 +1,0 @@
-java -jar pacali-licence-generator.jar
