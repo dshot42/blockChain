@@ -1,11 +1,13 @@
 package blockChain.chiffrement;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class EncryptData {
 
 
     public static void main(String[] args) throws Exception {
+        System.out.println(Arrays.toString(args));
         if (args[0].equals("generateOwnKey")) {
             System.out.println("AES =" + ChiffrementUtils.cryptAES(ChiffrementUtils.getOwnDatas()));
             System.out.println("SHA =" + ChiffrementUtils.generateHashKey(ChiffrementUtils.getOwnDatas()));

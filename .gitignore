@@ -1,0 +1,5 @@
+git-command.txt
+.idea
+*/node_modules
+*/.idea
+*/.gradle

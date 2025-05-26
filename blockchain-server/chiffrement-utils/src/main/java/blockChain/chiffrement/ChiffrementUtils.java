@@ -50,14 +50,14 @@ public class ChiffrementUtils {
     }
 
     public static String getDatas16(byte[] hardwareAddress, boolean address) {
-        String hardwareAddress16 = "";
+        StringBuilder hardwareAddress16 = new StringBuilder();
         int i = 0;
         for (byte b : hardwareAddress) {
-            if (address && i > 0) hardwareAddress16 += "-";
-            hardwareAddress16 += String.format("%02X", b);
+            if (address && i > 0) hardwareAddress16.append("-");
+            hardwareAddress16.append(String.format("%02X", b));
             i++;
         }
-        return hardwareAddress16;
+        return hardwareAddress16.toString();
     }
 
     public static boolean hashCompare(String userHash) throws Exception {
