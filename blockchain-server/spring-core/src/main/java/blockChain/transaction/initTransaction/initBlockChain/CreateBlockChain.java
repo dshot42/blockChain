@@ -1,11 +1,12 @@
 package blockChain.transaction.initTransaction.initBlockChain;
 
 import blockChain.chiffrement.ChiffrementUtils;
-import blockChain.models.Block;
+
 import blockChain.system.mongoDb.repository.ElementRepository;
 import blockChain.system.mongoDb.service.SequenceGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import vendor.models.Block;
 
 import java.util.LinkedList;
 

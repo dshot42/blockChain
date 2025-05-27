@@ -1,6 +1,7 @@
 package blockChain.wallet;
 
-import blockChain.models.PublicWallet;
+
+import vendor.models.PublicWallet;
 
 public class InitWallet {
     public static PublicWallet sellerWallet;

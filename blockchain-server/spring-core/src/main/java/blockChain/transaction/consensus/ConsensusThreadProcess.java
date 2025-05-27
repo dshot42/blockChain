@@ -1,9 +1,9 @@
 package blockChain.transaction.consensus;
 
-import blockChain.models.TransactionContainerToEmit;
 import blockChain.transaction.nodeThreads.utils.GenericObjectConvert;
 import blockChain.transaction.nodeThreads.utils.TransactionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import vendor.models.TransactionContainerToEmit;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

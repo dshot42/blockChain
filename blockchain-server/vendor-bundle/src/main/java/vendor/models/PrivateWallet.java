@@ -1,4 +1,4 @@
-package blockChain.models;
+package vendor.models;
 
 import java.util.List;
 

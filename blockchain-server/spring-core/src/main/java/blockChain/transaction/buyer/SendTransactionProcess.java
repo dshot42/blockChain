@@ -1,17 +1,17 @@
 package blockChain.transaction.buyer;
 
 import blockChain.chiffrement.ChiffrementUtils;
-import blockChain.models.PrivateWallet;
 import blockChain.transaction.consensus.ConsensusUtils;
 import blockChain.transaction.nodeThreads.utils.GenericObjectConvert;
 import blockChain.transaction.nodeThreads.utils.TransactionUtils;
 import blockChain.wallet.InitWallet;
-import blockChain.wallet.personalWalletHandler.PrivateWalletHandler;
-import blockChain.models.Transaction;
-import blockChain.models.TransactionContainerToEmit;
+import blockChain.wallet.personalWalletHandler.PrivateWalletHandler;;
 import blockChain.transaction.consensus.ConsensusThreadProcess;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import vendor.models.PrivateWallet;
+import vendor.models.Transaction;
+import vendor.models.TransactionContainerToEmit;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -57,7 +57,7 @@ public class SendTransactionProcess implements Runnable { // processus de l'ache
 
         Transaction transaction = MapperTransaction(ackTransaction);
         String transactionJson = GenericObjectConvert.objectToString(transaction);
-   //     transaction.setHash(ChiffrementUtils.cryptAES(transactionJson));
+        //     transaction.setHash(ChiffrementUtils.cryptAES(transactionJson));
 
         TransactionContainerToEmit sendTransaction = new TransactionContainerToEmit();
         sendTransaction.setReceiverAddress(ackTransaction.getSenderAddress());
@@ -94,7 +94,7 @@ public class SendTransactionProcess implements Runnable { // processus de l'ache
             TransactionContainerToEmit cryptedTransaction = nodeUtils.jsonToCryptedTransaction(datas);
             if (cryptedTransaction.getState().equals("SYN")) { //  demande de transaction
                 System.out.println("SYNC receive");
-               // first scenario
+                // first scenario
                 nodeUtils.emitCryptedTransactionOnNode(generateCryptedTransaction(cryptedTransaction, cryptedTransaction.getKey()));
                 Thread.sleep(10000); // on wait 10 sec avant pour pas avoir de souci d'asynchrone
 

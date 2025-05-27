@@ -1,12 +1,13 @@
 package blockChain.wallet.personalWalletHandler;
 
 import blockChain.chiffrement.ChiffrementUtils;
-import blockChain.models.PrivateWallet;
-import blockChain.models.PublicWallet;
-import blockChain.models.Transaction;
+
 import blockChain.transaction.nodeThreads.utils.GenericObjectConvert;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.stereotype.Component;
+import vendor.models.PrivateWallet;
+import vendor.models.PublicWallet;
+import vendor.models.Transaction;
 
 import java.io.*;
 import java.net.Socket;

@@ -1,9 +1,6 @@
 package blockChain.wallet.personalWalletHandler;
 
 import blockChain.chiffrement.ChiffrementUtils;
-import blockChain.models.PrivateWallet;
-import blockChain.models.PublicWallet;
-import blockChain.models.Transaction;
 import blockChain.transaction.nodeThreads.utils.GenericObjectConvert;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -13,6 +10,9 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.stereotype.Component;
+import vendor.models.PrivateWallet;
+import vendor.models.PublicWallet;
+import vendor.models.Transaction;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

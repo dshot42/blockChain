@@ -6,12 +6,12 @@ import blockChain.system.mongoDb.service.BlockChainService;
 import blockChain.transaction.consensus.ConsensusUtils;
 import blockChain.transaction.nodeThreads.utils.GenericObjectConvert;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import blockChain.models.Transaction;
-import blockChain.models.TransactionContainerToEmit;
 import blockChain.system.mongoDb.repository.ElementRepository;
 import blockChain.transaction.nodeThreads.utils.TransactionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import vendor.models.Transaction;
+import vendor.models.TransactionContainerToEmit;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

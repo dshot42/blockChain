@@ -2,8 +2,8 @@ package blockChain.transaction.nodeThreads;
 
 import blockChain.transaction.nodeThreads.utils.GenericObjectConvert;
 import blockChain.transaction.nodeThreads.utils.TransactionUtils;
-import blockChain.models.TransactionContainerToEmit;
 import org.springframework.beans.factory.annotation.Autowired;
+import vendor.models.TransactionContainerToEmit;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

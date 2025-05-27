@@ -1,4 +1,4 @@
-package blockChain.models;
+package vendor.models;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;

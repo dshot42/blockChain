@@ -1,15 +1,13 @@
 package blockChain.transaction.seller;
 
 import blockChain.chiffrement.ChiffrementUtils;
-import blockChain.models.PrivateWallet;
+
 import blockChain.transaction.consensus.ConsensusUtils;
 import blockChain.transaction.nodeThreads.utils.GenericObjectConvert;
 import blockChain.transaction.nodeThreads.utils.TransactionUtils;
 import blockChain.wallet.InitWallet;
 import blockChain.wallet.personalWalletHandler.PrivateWalletHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import blockChain.models.Transaction;
-import blockChain.models.TransactionContainerToEmit;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -18,6 +16,9 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
+import vendor.models.PrivateWallet;
+import vendor.models.Transaction;
+import vendor.models.TransactionContainerToEmit;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

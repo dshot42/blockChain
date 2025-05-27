@@ -1,18 +1,19 @@
 package blockChain.transaction.nodeThreads.utils;
 
 import blockChain.chiffrement.ChiffrementUtils;
-import blockChain.models.PublicWallet;
 import blockChain.system.mongoDb.repository.ElementRepository;
 import blockChain.system.mongoDb.service.SequenceGeneratorService;
 import blockChain.transaction.initTransaction.initBlockChain.CreateBlockChain;
 import blockChain.wallet.personalWalletHandler.PrivateWalletHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import blockChain.models.Transaction;
-import blockChain.models.TransactionContainerToEmit;
+
 import blockChain.transaction.nodeThreads.RunnableThreadProcess;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import vendor.models.PublicWallet;
+import vendor.models.Transaction;
+import vendor.models.TransactionContainerToEmit;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;

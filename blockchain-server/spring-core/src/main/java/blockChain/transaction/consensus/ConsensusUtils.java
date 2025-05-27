@@ -1,11 +1,12 @@
 package blockChain.transaction.consensus;
 
 import blockChain.chiffrement.ChiffrementUtils;
-import blockChain.models.PublicWallet;
-import blockChain.models.Transaction;
-import blockChain.models.TransactionContainerToEmit;
+
 import blockChain.transaction.nodeThreads.utils.GenericObjectConvert;
 import blockChain.transaction.nodeThreads.utils.TransactionUtils;
+import vendor.models.PublicWallet;
+import vendor.models.Transaction;
+import vendor.models.TransactionContainerToEmit;
 
 import java.io.IOException;
 import java.io.OutputStream;
