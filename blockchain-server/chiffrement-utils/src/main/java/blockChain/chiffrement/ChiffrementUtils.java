@@ -124,4 +124,20 @@ public class ChiffrementUtils {
                 .decode(datas));
         return new String(plainText);
     }
+
+
+    /*************************/
+
+    public static String xorEncrypt(String input, String key) {
+        StringBuilder output = new StringBuilder();
+        for (int i = 0; i < input.length(); i++) {
+            output.append((char) (input.toLowerCase().charAt(i) ^ key.toUpperCase().charAt(i % key.length())));
+            // logical XOR : the " ^ "
+            //  compares each bit of two numbers.
+            // If the bits are different, the result is 1; if they are the same, the result is 0.
+
+            // i % key.length() permet de boucler sur la clé si elle est plus courte que l'entrée
+        }
+        return output.toString();
+    }
 }

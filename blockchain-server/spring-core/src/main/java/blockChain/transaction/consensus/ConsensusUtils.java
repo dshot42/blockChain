@@ -33,7 +33,7 @@ public class ConsensusUtils {
         System.out.println("send transaction ImmutableChainedHash : {" + returnedTransac.getImmutableChainedHash() + "} to the block chain system with success ");
         System.out.println("ACK system receive");
         nodeUtils.persistTransactionOnWallet(returnedTransac, walletKey, wallet);
-        System.out.println("Transaction persité sur le wall de : " + wallet.getUniqueWalletId());
+        System.out.println("Transaction persite sur le wall de : " + wallet.getUniqueWalletId());
     }
 
 }

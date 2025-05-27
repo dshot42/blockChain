@@ -93,14 +93,10 @@ public class TransactionUtils {
         t.start();
     }
 
-
-    public void
-
-
-    emitCryptedTransactionOnNode(String cryptedTransactiondata) throws Exception {
+    public void emitCryptedTransactionOnNode(String cryptedTransactiondata) throws Exception {
         String firstMember = getRandomNextNodeMember();
         startNextNodeMemberThread(firstMember);
-        Thread.sleep(100); // le temps de demarrer la socket d'écoute
+        Thread.sleep(100); //   wait for the thread to start
         socketEmitToNextThread(firstMember, cryptedTransactiondata);
     }
 

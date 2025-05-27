@@ -179,7 +179,7 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
             emitFeedBackBlockChainToSender(returnedTransac);
 
         } catch (Exception e) {
-            System.out.println("Erreur lors de la communication avec le serveur, POST on block chain ");
+            System.out.println("Erreur lors de la communication avec le serveur, POST on block chain, "+ e);
         }
     }
 

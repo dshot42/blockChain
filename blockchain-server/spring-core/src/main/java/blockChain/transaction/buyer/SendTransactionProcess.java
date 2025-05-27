@@ -94,9 +94,11 @@ public class SendTransactionProcess implements Runnable { // processus de l'ache
             TransactionContainerToEmit cryptedTransaction = nodeUtils.jsonToCryptedTransaction(datas);
             if (cryptedTransaction.getState().equals("SYN")) { //  demande de transaction
                 System.out.println("SYNC receive");
-                // todo important ! mes 2 scenario !!!!
+               // first scenario
                 nodeUtils.emitCryptedTransactionOnNode(generateCryptedTransaction(cryptedTransaction, cryptedTransaction.getKey()));
-               Thread.sleep(10000); // on wait 10 sec avant pour pas avoir de souci d'asynchrone
+                Thread.sleep(10000); // on wait 10 sec avant pour pas avoir de souci d'asynchrone
+
+                // second scenario => consensus
                 emitBroadcastCryptedTransactionOnConsensus(generateCryptedTransaction(cryptedTransaction, ChiffrementUtils.systemKey)); // systeme key
             } else if (cryptedTransaction.getState().equals("ACK")) { //  retour apres persistance block chaine
                 ConsensusUtils.systemConsensusAckFeedBackTransactionPersisted(InitWallet.buyerWallet, walletKey, nodeUtils, cryptedTransaction);

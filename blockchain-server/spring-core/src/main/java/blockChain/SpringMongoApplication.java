@@ -53,14 +53,16 @@ public class SpringMongoApplication {
 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(SpringMongoApplication.class, args);
-
+        PrivateWalletHandler.clearWallet(); // comment this line
         createInitBlockChain.initBlockChain();
-
+        System .out.println("Block chain system initialized");
         Thread systemSocketListener = new Thread(mongoWebConsensusListener); // acheteur
         systemSocketListener.start();
+        System .out.println("Consensus System socket listener is instantiated and currently running");
         Thread.sleep(1000);
-
+        System.out.println("Check wallet : ");
         checkWallet();
+        System.out.println("Wallet is ready, launching transaction");
         launchTransaction();
     }
 

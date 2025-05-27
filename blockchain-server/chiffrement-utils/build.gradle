@@ -1,15 +1,13 @@
 plugins {
     id 'java'
     id 'java-library'
-    //id 'application'
+    id 'application'
 }
 
-/*
+
 application {
-    mainClass = 'fr.altaiire.pacali.EncryptData'
+    mainClass = 'blockChain.chiffrement.EncryptData'
 }
-*/
-
 
 
 repositories {
@@ -28,7 +26,7 @@ jar {
     exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
 
     manifest {
-        attributes 'Main-Class': 'fr.altaiire.pacali.EncryptData'
+        attributes 'Main-Class': 'blockChain.chiffrement.EncryptData'
 //                'Class-Path': configurations.runtime.files.collect { "lib/$it.name" }.join(' ')
     }
 }
