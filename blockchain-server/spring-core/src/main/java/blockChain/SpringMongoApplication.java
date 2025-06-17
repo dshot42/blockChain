@@ -2,10 +2,10 @@ package blockChain;
 
 import blockChain.system.mongoDb.webSocket.MongoWebConsensusListener;
 import blockChain.transaction.initTransaction.initBlockChain.CreateBlockChain;
-import blockChain.wallet.personalWalletHandler.PrivateWalletHandler;
 import blockChain.transaction.buyer.SendTransactionProcess;
 import blockChain.transaction.seller.AckAndReceiveTransactionProcess;
-import blockChain.wallet.InitWallet;
+import client.wallet.handler.personalWalletHandler.InitWallet;
+import client.wallet.handler.personalWalletHandler.PrivateWalletHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,13 +16,9 @@ import org.springframework.context.annotation.Configuration;
 public class SpringMongoApplication {
 
     static CreateBlockChain createInitBlockChain;
-
     static SendTransactionProcess sendTransactionController;
-
     static AckAndReceiveTransactionProcess askTransactionController;
-
     static MongoWebConsensusListener mongoWebConsensusListener;
-
 
     @Autowired
     public SpringMongoApplication(CreateBlockChain createInitBlockChain, SendTransactionProcess sendTransaction, AckAndReceiveTransactionProcess askTransactionController, MongoWebConsensusListener mongoWebConsensusListener) {
@@ -52,24 +48,18 @@ public class SpringMongoApplication {
      */
 
     public static void main(String[] args) throws Exception {
+       // SpringWalletMain.main(args); // start wallet application
         SpringApplication.run(SpringMongoApplication.class, args);
-        PrivateWalletHandler.clearWallet(); // comment this line
+       // PrivateWalletHandler.clearWallet(); // comment this line
         createInitBlockChain.initBlockChain();
         System .out.println("Block chain system initialized");
         Thread systemSocketListener = new Thread(mongoWebConsensusListener); // acheteur
         systemSocketListener.start();
         System .out.println("Consensus System socket listener is instantiated and currently running");
-        Thread.sleep(1000);
-        System.out.println("Check wallet : ");
-        checkWallet();
-        System.out.println("Wallet is ready, launching transaction");
+        Thread.sleep(15000);
         launchTransaction();
     }
 
-    private static void checkWallet() throws Exception {
-        PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler(InitWallet.buyerWallet.getAddress(), InitWallet.buyerWallet.getUniqueWalletId());
-        privateWalletHandler.testWallet();
-    }
 
     private static void launchTransaction() throws InterruptedException {
         Thread tSend = new Thread(sendTransactionController); // acheteur

@@ -8,12 +8,14 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 
 //@CrossOrigin(origins = "http://localhost:4200")
-@Component
+@Service
 public class ElementRepository {
 
     @Autowired

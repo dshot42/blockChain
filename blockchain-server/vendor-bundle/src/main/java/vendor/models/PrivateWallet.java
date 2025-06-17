@@ -3,18 +3,9 @@ package vendor.models;
 import java.util.List;
 
 public class PrivateWallet {
-
-    public PrivateWallet() {
-    }
-
-    public PrivateWallet(String address, String uniqueWalletId) {
-        this.address = address;
-        this.uniqueWalletId = uniqueWalletId;
-    }
     public String address;
 
-    public String uniqueWalletId;
-
+    public String walletId;
 
     byte[] key;
 
@@ -24,7 +15,13 @@ public class PrivateWallet {
 
     public float amount;
 
+    public PrivateWallet() {
+    }
 
+    public PrivateWallet(String address, String walletId) {
+        this.address = address;
+        this.walletId = walletId;
+    }
 
     public byte[] getKey() {
         return key;
@@ -66,11 +63,11 @@ public class PrivateWallet {
         this.address = address;
     }
 
-    public String getUniqueWalletId() {
-        return uniqueWalletId;
+    public String getWalletId() {
+        return walletId;
     }
 
-    public void setUniqueWalletId(String uniqueWalletId) {
-        this.uniqueWalletId = uniqueWalletId;
+    public void setWalletId(String walletId) {
+        this.walletId = walletId;
     }
 }

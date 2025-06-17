@@ -1,7 +1,6 @@
-package blockChain.wallet.personalWalletHandler;
+package client.wallet.handler.personalWalletHandler;
 
 import blockChain.chiffrement.ChiffrementUtils;
-import blockChain.transaction.nodeThreads.utils.GenericObjectConvert;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Component;
 import vendor.models.PrivateWallet;
 import vendor.models.PublicWallet;
 import vendor.models.Transaction;
+import vendor.utils.GenericObjectConvert;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -46,7 +46,7 @@ public class WalletService {
             return amount;
 
         for (Transaction t : wallet.getTransactions()) {
-            if (t.getSenderAddress().getUniqueWalletId().equals(wallet.getUniqueWalletId()))
+            if (t.getSenderAddress().getWalletId().equals(wallet.getWalletId()))
                 amount -= t.getAmount();
             else
                 amount += t.getAmount();
@@ -89,7 +89,7 @@ public class WalletService {
         PublicWallet publicWallet = null;
         DefaultHttpClient httpClient = new DefaultHttpClient();
 
-        HttpGet request = new HttpGet("http://localhost:8090/MongoDb/wallet/PublicWallet/uniqueWalletId/" + privateWallet.getUniqueWalletId());
+        HttpGet request = new HttpGet("http://localhost:8090/MongoDb/wallet/PublicWallet/walletId/" + privateWallet.getWalletId());
         request.addHeader("content-type", "application/json");
         try {
             CloseableHttpResponse response = httpClient.execute(request);

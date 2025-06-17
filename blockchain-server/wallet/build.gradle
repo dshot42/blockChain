@@ -2,27 +2,36 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.8'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id 'application'
 }
 
-group 'org.example'
-version 'unspecified'
+
+application {
+    mainClass = 'client.wallet.SpringWalletMain'
+}
+
+
+group = 'block-chain'
+version = '0.0.1-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven { url 'https://maven.pkg.github.com/rsocket/rsocket-java' } // equivalent socket IO
+    maven { url 'https://repo.spring.io/snapshot' }
 }
 
 dependencies {
 
-    implementation  project(":chiffrement-utils")
+    implementation project(path: ':vendor-bundle')
+    implementation project(path: ':chiffrement-utils')
 
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
     implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5'
 
-    /////////////// communication to nodejs front end ///////////////
 
 }

@@ -4,12 +4,12 @@ package blockChain.system.mongoDb.webSocket;
 import blockChain.chiffrement.ChiffrementUtils;
 import blockChain.system.mongoDb.service.BlockChainService;
 import blockChain.transaction.consensus.ConsensusUtils;
-import blockChain.transaction.nodeThreads.utils.GenericObjectConvert;
+import org.springframework.stereotype.Service;
+import vendor.utils.GenericObjectConvert;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import blockChain.system.mongoDb.repository.ElementRepository;
 import blockChain.transaction.nodeThreads.utils.TransactionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import vendor.models.Transaction;
 import vendor.models.TransactionContainerToEmit;
 
@@ -23,7 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-@Component
+@Service
 public class MongoWebConsensusListener implements Runnable {
 
     @Autowired

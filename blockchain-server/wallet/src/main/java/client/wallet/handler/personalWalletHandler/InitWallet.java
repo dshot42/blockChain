@@ -1,24 +1,24 @@
-package blockChain.wallet;
+package client.wallet.handler.personalWalletHandler;
 
 
 import vendor.models.PublicWallet;
 
 public class InitWallet {
-    public static PublicWallet sellerWallet;
+    public static PublicWallet remoteWallet;
 
     static {
         try {
-            sellerWallet = new PublicWallet("127.0.0.1:8889", "Seller");
+            remoteWallet = new PublicWallet("127.0.0.1:8889", "Seller");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static PublicWallet buyerWallet;
+    public static PublicWallet personnalWallet;
 
     static {
         try {
-            buyerWallet = new PublicWallet("127.0.0.1:8888", "Buyer");
+            personnalWallet = new PublicWallet("127.0.0.1:8888", "Personnal");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

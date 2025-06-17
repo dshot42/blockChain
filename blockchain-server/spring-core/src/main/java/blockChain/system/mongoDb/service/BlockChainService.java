@@ -4,7 +4,7 @@ import blockChain.chiffrement.ChiffrementUtils;
 
 import blockChain.system.mongoDb.repository.ElementRepository;
 import blockChain.transaction.initTransaction.initBlockChain.CreateBlockChain;
-import blockChain.transaction.nodeThreads.utils.GenericObjectConvert;
+import vendor.utils.GenericObjectConvert;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -122,14 +122,14 @@ public class BlockChainService {
         // creer si elle existe pas !
         elementRepository.getOrCreateCollection("PublicWallet");
 
-        List<Object> blockChainPublicWalletObj = elementRepository.getElementBy(PublicWallet.class, "uniqueWalletId", wallet.getUniqueWalletId());
+        List<Object> blockChainPublicWalletObj = elementRepository.getElementBy(PublicWallet.class, "walletId", wallet.getWalletId());
 
         List<Transaction> transactionsList = new LinkedList<>();
         PublicWallet blockChainPublicWallet = null;
         if (blockChainPublicWalletObj.size() == 0) {
             blockChainPublicWallet = new PublicWallet();
             blockChainPublicWallet.setId(sequenceGeneratorService.generateSequence(PublicWallet.class.getName() + "_seq"));
-            blockChainPublicWallet.setUniqueWalletId(wallet.getUniqueWalletId());
+            blockChainPublicWallet.setWalletId(wallet.getWalletId());
             blockChainPublicWallet.setAddress(wallet.getAddress());
         } else {
             blockChainPublicWallet = PublicWallet.class.cast(blockChainPublicWalletObj.get(0));

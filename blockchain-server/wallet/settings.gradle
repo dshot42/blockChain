@@ -1,0 +1,6 @@
+rootProject.name = 'crypto-block-chain'
+
+include 'chiffrement-utils'
+include 'vendor-bundle'
+
+

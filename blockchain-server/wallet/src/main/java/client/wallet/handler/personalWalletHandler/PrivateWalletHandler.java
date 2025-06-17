@@ -1,13 +1,12 @@
-package blockChain.wallet.personalWalletHandler;
+package client.wallet.handler.personalWalletHandler;
 
 import blockChain.chiffrement.ChiffrementUtils;
-
-import blockChain.transaction.nodeThreads.utils.GenericObjectConvert;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.stereotype.Component;
 import vendor.models.PrivateWallet;
 import vendor.models.PublicWallet;
 import vendor.models.Transaction;
+import vendor.utils.GenericObjectConvert;
 
 import java.io.*;
 import java.net.Socket;
@@ -21,9 +20,9 @@ import java.util.stream.Collectors;
 @Component
 public class PrivateWalletHandler {
 
-    public static String DIRECTORY = "/src/main/resources/wallet/";
+    public final static String DIRECTORY = "/private-wallet/wallet/";
 
-    public String id;
+    public String walletId;
 
     public String address;
 
@@ -31,26 +30,28 @@ public class PrivateWalletHandler {
 
     private String filePath;
 
+     private static final String ROOTPROJECT = Paths.get("").toAbsolutePath().getParent().toString();
 
     public PrivateWalletHandler() {
     }
 
 
     public PrivateWalletHandler(String id) {
-        this.id = id;
-        this.filePath = Paths.get("").toAbsolutePath() + DIRECTORY + "wallet" + this.id + ".txt";
+        this.walletId = id;
+        this.filePath = ROOTPROJECT + DIRECTORY + "wallet" + this.walletId + ".txt";
     }
 
     public PrivateWalletHandler(String address, String id) {
-        this.id = id;
+        this.walletId = id;
         this.address = address;
-        this.filePath = Paths.get("").toAbsolutePath() + DIRECTORY + "wallet" + this.id + ".txt";
+        System.out.println(ROOTPROJECT);
+        this.filePath = ROOTPROJECT + DIRECTORY + "wallet" + this.walletId + ".txt";
     }
 
-    public boolean testWallet() throws Exception {
+    public void testWallet() {
         PrivateWallet privateWallet = getWallet();
         WalletService.getAmount(privateWallet);
-        return WalletService.checkIntegrity(privateWallet);
+        WalletService.checkIntegrity(privateWallet);
     }
 
     public PrivateWallet refreshWallet() throws Exception {
@@ -62,10 +63,10 @@ public class PrivateWalletHandler {
         File file = new File(filePath);
         if (!file.exists()) {
             try {
-                file.getParentFile().mkdirs();
+             System.out.println("Creating NEW WALLET ");
                 file.createNewFile();
             } catch (IOException e) {
-                throw new RuntimeException("Failed to create wallet file: " + e.getMessage());
+                System.out.println("Failed to create wallet file: " + e.getMessage());
             }
         }
         String walletData = readWalletFile(file);
@@ -73,12 +74,12 @@ public class PrivateWalletHandler {
         try {
             if (walletData.isEmpty()) {
                 //create new unique wallet
-                personnalWallet = new PrivateWallet(address, id);
+                personnalWallet = new PrivateWallet(address, walletId);
                 persistWallet(file, personnalWallet);
 
             } else {
                 personnalWallet = PrivateWallet.class.cast(GenericObjectConvert.stringToObject(
-                                ChiffrementUtils.decryptAES(walletData, walletPrivateKey), PrivateWallet.class));
+                        ChiffrementUtils.decryptAES(walletData, walletPrivateKey), PrivateWallet.class));
             }
         } catch (Exception e) {
             throw new RuntimeException("Fail to persist Wallet , " + e);
@@ -97,7 +98,7 @@ public class PrivateWalletHandler {
 
         persistWallet(new File(filePath), privateWallet);
         try {
-            socketEmitRefreshWalletAfterTransaction(transaction); // send transaction to front
+            emitTransactionToSocketClient(transaction); // send transaction to front
         } catch (Exception e) {
             System.out.println("Node socket client doesn't currently running, just run : crypto-block-chain\\node-client\\launcher.bat  : " + e.getMessage());
         }
@@ -142,9 +143,10 @@ public class PrivateWalletHandler {
         return privateWallet;
     }
 
-    public void socketEmitRefreshWalletAfterTransaction(Transaction transaction) throws Exception {
-        Socket socket = new Socket("127.0.0.1", 3000); //TCP Socket to node client
-        socket.setSendBufferSize((int) 1e7); // // 100Mo
+    public void emitTransactionToSocketClient(Transaction transaction) throws Exception {
+        // webSocketClient
+        Socket socket = new Socket("127.0.0.1", 3000); //TCP Socket to my client node
+        socket.setSendBufferSize((int) 1e7); // // 100Mo buffer
         OutputStream output = socket.getOutputStream();
         byte[] data = GenericObjectConvert.objectToString(transaction).getBytes();
 
@@ -156,7 +158,7 @@ public class PrivateWalletHandler {
     public PublicWallet mapPrivateToPublicWaller(PrivateWallet privateWallet) {
         if (privateWallet.getTransactions() == null) {
             return new PublicWallet(privateWallet.getAddress()
-                    , privateWallet.getUniqueWalletId());
+                    , privateWallet.getWalletId());
         }
 
         List<Transaction> publicTransacList = privateWallet.getTransactions().stream().map(t -> {
@@ -168,13 +170,13 @@ public class PrivateWalletHandler {
         }).collect(Collectors.toList());
 
         return new PublicWallet(privateWallet.getAddress()
-                , privateWallet.getUniqueWalletId(), publicTransacList);
+                , privateWallet.getWalletId(), publicTransacList);
     }
 
 
     public static void clearWallet() throws IOException {
         try {
-            FileUtils.cleanDirectory(new File(Paths.get("").toAbsolutePath() + DIRECTORY));
+            FileUtils.cleanDirectory(new File(ROOTPROJECT + DIRECTORY));
             System.out.println("Wallet cleared successfully.");
         } catch (IOException e) {
             throw new IOException(e);

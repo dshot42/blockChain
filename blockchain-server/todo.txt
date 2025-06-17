@@ -1,0 +1,4 @@
+call new transaction with wallet address in param and amount
+representer le concensus graphiquement via socket
+
+remettre un certificat android sur road of skill sur heberg ovh

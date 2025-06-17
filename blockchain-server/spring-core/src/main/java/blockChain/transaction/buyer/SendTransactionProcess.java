@@ -2,10 +2,10 @@ package blockChain.transaction.buyer;
 
 import blockChain.chiffrement.ChiffrementUtils;
 import blockChain.transaction.consensus.ConsensusUtils;
-import blockChain.transaction.nodeThreads.utils.GenericObjectConvert;
+import client.wallet.handler.personalWalletHandler.InitWallet;
+import client.wallet.handler.personalWalletHandler.PrivateWalletHandler;
+import vendor.utils.GenericObjectConvert;
 import blockChain.transaction.nodeThreads.utils.TransactionUtils;
-import blockChain.wallet.InitWallet;
-import blockChain.wallet.personalWalletHandler.PrivateWalletHandler;;
 import blockChain.transaction.consensus.ConsensusThreadProcess;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URISyntaxException;
 
 @Component
 public class SendTransactionProcess implements Runnable { // processus de l'acheteur
@@ -69,10 +70,10 @@ public class SendTransactionProcess implements Runnable { // processus de l'ache
         return GenericObjectConvert.objectToString(sendTransaction);
     }
 
-    private static Transaction MapperTransaction(TransactionContainerToEmit askTransaction) {
+    private static Transaction MapperTransaction(TransactionContainerToEmit askTransaction) throws URISyntaxException {
         Transaction transaction = new Transaction();
         transaction.setReceiverAddress(askTransaction.getSenderAddress()); // address communiqué
-        PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler(InitWallet.buyerWallet.getAddress(), InitWallet.buyerWallet.getUniqueWalletId());
+        PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler(InitWallet.personnalWallet.getAddress(), InitWallet.personnalWallet.getWalletId());
 
         PrivateWallet myPrivateWallet = privateWalletHandler.getWallet();
 
@@ -84,7 +85,7 @@ public class SendTransactionProcess implements Runnable { // processus de l'ache
 
 
     public void socketClientStart() throws Exception {
-        ServerSocket serverSocket = new ServerSocket(Integer.parseInt(InitWallet.buyerWallet.getAddress().split(":")[1]));
+        ServerSocket serverSocket = new ServerSocket(Integer.parseInt(InitWallet.personnalWallet.getAddress().split(":")[1]));
         while (true) {
             Socket clientSocket = serverSocket.accept();
             out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -101,7 +102,7 @@ public class SendTransactionProcess implements Runnable { // processus de l'ache
                 // second scenario => consensus
                 emitBroadcastCryptedTransactionOnConsensus(generateCryptedTransaction(cryptedTransaction, ChiffrementUtils.systemKey)); // systeme key
             } else if (cryptedTransaction.getState().equals("ACK")) { //  retour apres persistance block chaine
-                ConsensusUtils.systemConsensusAckFeedBackTransactionPersisted(InitWallet.buyerWallet, walletKey, nodeUtils, cryptedTransaction);
+                ConsensusUtils.systemConsensusAckFeedBackTransactionPersisted(InitWallet.personnalWallet, walletKey, nodeUtils, cryptedTransaction);
                 System.out.println("Fin de la transaction par Consensus ! (SENDER)");
             }
         }

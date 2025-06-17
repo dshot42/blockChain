@@ -2,7 +2,7 @@ package blockChain.transaction.consensus;
 
 import blockChain.chiffrement.ChiffrementUtils;
 
-import blockChain.transaction.nodeThreads.utils.GenericObjectConvert;
+import vendor.utils.GenericObjectConvert;
 import blockChain.transaction.nodeThreads.utils.TransactionUtils;
 import vendor.models.PublicWallet;
 import vendor.models.Transaction;
@@ -34,7 +34,7 @@ public class ConsensusUtils {
         System.out.println("send transaction ImmutableChainedHash : {" + returnedTransac.getImmutableChainedHash() + "} to the block chain system with success ");
         System.out.println("ACK system receive");
         nodeUtils.persistTransactionOnWallet(returnedTransac, walletKey, wallet);
-        System.out.println("Transaction persite sur le wall de : " + wallet.getUniqueWalletId());
+        System.out.println("Transaction persite sur le wall de : " + wallet.getWalletId());
     }
 
 }

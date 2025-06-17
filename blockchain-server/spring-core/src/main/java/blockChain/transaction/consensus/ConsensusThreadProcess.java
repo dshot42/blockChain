@@ -1,6 +1,6 @@
 package blockChain.transaction.consensus;
 
-import blockChain.transaction.nodeThreads.utils.GenericObjectConvert;
+import vendor.utils.GenericObjectConvert;
 import blockChain.transaction.nodeThreads.utils.TransactionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import vendor.models.TransactionContainerToEmit;

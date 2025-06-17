@@ -4,7 +4,7 @@ import blockChain.chiffrement.ChiffrementUtils;
 import blockChain.system.mongoDb.repository.ElementRepository;
 import blockChain.system.mongoDb.service.SequenceGeneratorService;
 import blockChain.transaction.initTransaction.initBlockChain.CreateBlockChain;
-import blockChain.wallet.personalWalletHandler.PrivateWalletHandler;
+import client.wallet.handler.personalWalletHandler.PrivateWalletHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import vendor.models.PublicWallet;
 import vendor.models.Transaction;
 import vendor.models.TransactionContainerToEmit;
+import vendor.utils.GenericObjectConvert;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -111,9 +112,9 @@ public class TransactionUtils {
 
     public static void persistTransactionOnWallet(Transaction transaction, byte[] privateKey, PublicWallet publicWallet) throws Exception {
 
-        PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler(publicWallet.getAddress(), publicWallet.getUniqueWalletId());
+        PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler(publicWallet.getAddress(), publicWallet.getWalletId());
         privateWalletHandler.insertNewTransaction(transaction);
-        System.out.println("new Transaction inserted into the user's wallet : " + publicWallet.getUniqueWalletId());
+        System.out.println("new Transaction inserted into the user's wallet : " + publicWallet.getWalletId());
     }
 
     public static Class<?> getClassForName(String element) throws ClassNotFoundException {

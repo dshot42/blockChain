@@ -4,6 +4,10 @@ package blockChain.system.mongoDb.controller;
 import blockChain.system.mongoDb.repository.ElementRepository;
 import blockChain.system.mongoDb.service.BlockChainService;
 import blockChain.system.mongoDb.service.SequenceGeneratorService;
+import blockChain.system.mongoDb.webSocket.MongoWebConsensusListener;
+import blockChain.transaction.buyer.SendTransactionProcess;
+import blockChain.transaction.initTransaction.initBlockChain.CreateBlockChain;
+import blockChain.transaction.seller.AckAndReceiveTransactionProcess;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -27,6 +31,15 @@ public class MongoWebServiceController {
     @Autowired
     BlockChainService blockChainService;
 
+
+    // TransactionHandlers
+    @Autowired
+    static SendTransactionProcess sendTransactionController;
+    @Autowired
+    static AckAndReceiveTransactionProcess askTransactionController;
+
+
+
     /***
      *
      * @param element
@@ -37,23 +50,32 @@ public class MongoWebServiceController {
      * @throws ClassNotFoundException
      * les filtres peuvent etre unique ou composés avec un separateur ';' exemple age lt 50 AND gt 20 => age/20;50/lt;gt
      */
+
+    @PostMapping("/Send/Transaction")
+    private static void launchTransaction() throws InterruptedException {
+        Thread tSend = new Thread(sendTransactionController); // acheteur
+        tSend.start();
+        Thread.sleep(1000);
+
+        Thread tAsk = new Thread(askTransactionController); // vendeur
+        tAsk.start();
+    }
+
+
     @GetMapping("/{element}/{field}/{value}/{filter}")
     public Object getAllElements(@PathVariable(value = "element") String element, @PathVariable(value = "field") String field,
                                  @PathVariable(value = "value") String value, @PathVariable(value = "filter") String filter) throws ClassNotFoundException {
-        //curl -X GET localhost:8090/api/vi/elements/WorkOrder
         return ResponseEntity.ok(elementService.getElementBy(this.getClassForName(element), field, value, filter));
     }
 
     @GetMapping("/{element}/{field}/{value}")
     public Object getAllElements(@PathVariable(value = "element") String element, @PathVariable(value = "field") String field,
                                  @PathVariable(value = "value") String value) throws ClassNotFoundException {
-        //curl -X GET localhost:8090/api/vi/elements/WorkOrder
         return ResponseEntity.ok(elementService.getElementBy(this.getClassForName(element), field, value));
     }
 
     @GetMapping("/{element}")
     public Object getAllElements(@PathVariable(value = "element") String element) throws ClassNotFoundException {
-        //curl -X GET localhost:8090/api/vi/elements/WorkOrder
         return ResponseEntity.ok(elementService.getAllElements(this.getClassForName(element)));
     }
 
@@ -88,7 +110,6 @@ public class MongoWebServiceController {
 
     @PostMapping("/BlockChain/transaction/checkIntegrity")
     public ResponseEntity<Object> getTransaction(@Valid @RequestBody String datas) throws Exception {
-        //curl -X GET localhost:8090/api/vi/elements/WorkOrder
         return ResponseEntity.ok(blockChainService.checkIntegrityOfTransaction(datas));
     }
 
@@ -99,10 +120,9 @@ public class MongoWebServiceController {
 
     ///////////////////// specificWallet /////////////////// a mettre ailleurs !
 
-    @GetMapping("wallet/PublicWallet/{field}/{value}")
+    @GetMapping("cryptedWallet/wallet/PublicWallet/{field}/{value}")
     public ResponseEntity<Object> getAllElements( @PathVariable(value = "field") String field,
                                  @PathVariable(value = "value") String value) throws Exception {
-        //curl -X GET localhost:8090/api/vi/elements/WorkOrder
         if (elementService.getElementBy(PublicWallet.class, field, value).size() != 0)
             return ResponseEntity.ok(elementService.getElementBy(PublicWallet.class, field, value).get(0));
         else

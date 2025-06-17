@@ -8,29 +8,11 @@ import java.util.List;
 
 @Document("PublicWallet")
 public class PublicWallet  {
-    public PublicWallet() {
-    }
-
-    public PublicWallet(String address, String uniqueWalletId, List<Transaction> transactions) {
-        this.address = address;
-        this.uniqueWalletId = uniqueWalletId;
-        this.transactions = transactions;
-    }
-
-    public PublicWallet(String address, String uniqueWalletId) {
-        this.address = address;
-        this.uniqueWalletId = uniqueWalletId;
-    }
-
-
-    @Transient
-    public static final String SEQUENCE_NAME = "PublicWallet_sequence";
-
     @Id
     public Long id;
     public String address;
 
-    public String uniqueWalletId;
+    public String walletId;
 
     public List<Transaction> transactions;
 
@@ -42,12 +24,12 @@ public class PublicWallet  {
         this.address = address;
     }
 
-    public String getUniqueWalletId() {
-        return uniqueWalletId;
+    public String getWalletId() {
+        return walletId;
     }
 
-    public void setUniqueWalletId(String uniqueWalletId) {
-        this.uniqueWalletId = uniqueWalletId;
+    public void setWalletId(String walletId) {
+        this.walletId = walletId;
     }
 
     public List<Transaction> getTransactions() {
@@ -65,4 +47,22 @@ public class PublicWallet  {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public PublicWallet() {};
+    public PublicWallet(String address, String walletId, List<Transaction> transactions) {
+        this.address = address;
+        this.walletId = walletId;
+        this.transactions = transactions;
+    }
+
+    public PublicWallet(String address, String walletId) {
+        this.address = address;
+        this.walletId = walletId;
+    }
+
+
+    @Transient
+    public static final String SEQUENCE_NAME = "PublicWallet_sequence";
+
+
 }
