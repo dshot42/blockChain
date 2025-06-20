@@ -1,9 +1,10 @@
 package blockChain.transaction.consensus;
 
+import blockChain.nodeThreads.utils.TransactionUtils;
 import vendor.utils.GenericObjectConvert;
-import blockChain.transaction.nodeThreads.utils.TransactionUtils;
+import blockChain.transaction.consensus.ConsensusUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import vendor.models.TransactionContainerToEmit;
+import vendor.models.TransitTransaction;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -56,11 +57,11 @@ public class ConsensusThreadProcess implements Runnable { // membre du jury
     private void triggerRecipeEvent() throws Exception {
         out = new PrintWriter(clientSocket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        TransactionContainerToEmit transactionContainerToEmit = nodeUtils.jsonToCryptedTransaction(in.readLine());
-        String thisHash = nodeUtils.hashTransaction(transactionContainerToEmit.getCryptedTransaction());
-        transactionContainerToEmit.setCryptedTransactionHash(thisHash);
+        TransitTransaction transitTransaction = nodeUtils.jsonToCryptedTransaction(in.readLine());
+        String thisHash = nodeUtils.hashTransaction(transitTransaction.getCryptedTransaction());
+        transitTransaction.setCryptedTransactionHash(thisHash);
         Thread.sleep(100); // cela serait mieux avec un ack, verifier que les socket member sont ready !
-        ConsensusUtils.sendTransactionToBlockChainSystem(GenericObjectConvert.objectToString(transactionContainerToEmit));
+        ConsensusUtils.sendTransactionToBlockChainSystem(GenericObjectConvert.objectToString(transitTransaction));
     }
 
 

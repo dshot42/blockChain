@@ -2,11 +2,12 @@ package blockChain.transaction.consensus;
 
 import blockChain.chiffrement.ChiffrementUtils;
 
+import blockChain.nodeThreads.utils.TransactionUtils;
 import vendor.utils.GenericObjectConvert;
-import blockChain.transaction.nodeThreads.utils.TransactionUtils;
+import blockChain.transaction.consensus.ConsensusUtils;
 import vendor.models.PublicWallet;
 import vendor.models.Transaction;
-import vendor.models.TransactionContainerToEmit;
+import vendor.models.TransitTransaction;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -28,9 +29,9 @@ public class ConsensusUtils {
     }
 
 
-    public static void systemConsensusAckFeedBackTransactionPersisted(PublicWallet wallet, byte[] walletKey, TransactionUtils nodeUtils, TransactionContainerToEmit transactionContainerToEmit) throws Exception {
+    public static void systemConsensusAckFeedBackTransactionPersisted(PublicWallet wallet, byte[] walletKey, TransactionUtils nodeUtils, TransitTransaction transitTransaction) throws Exception {
         System.out.println("persite on wallet");
-        Transaction returnedTransac = Transaction.class.cast(GenericObjectConvert.stringToObject(ChiffrementUtils.decryptAES(transactionContainerToEmit.getCryptedTransaction(), ChiffrementUtils.systemKey), Transaction.class));
+        Transaction returnedTransac = Transaction.class.cast(GenericObjectConvert.stringToObject(ChiffrementUtils.decryptAES(transitTransaction.getCryptedTransaction(), ChiffrementUtils.systemKey), Transaction.class));
         System.out.println("send transaction ImmutableChainedHash : {" + returnedTransac.getImmutableChainedHash() + "} to the block chain system with success ");
         System.out.println("ACK system receive");
         nodeUtils.persistTransactionOnWallet(returnedTransac, walletKey, wallet);

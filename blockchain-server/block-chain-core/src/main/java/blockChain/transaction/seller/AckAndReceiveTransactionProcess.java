@@ -2,12 +2,13 @@ package blockChain.transaction.seller;
 
 import blockChain.chiffrement.ChiffrementUtils;
 
+import blockChain.nodeThreads.utils.TransactionUtils;
 import blockChain.transaction.consensus.ConsensusUtils;
 import client.wallet.handler.personalWalletHandler.InitTransactionDetails;
 import client.wallet.handler.personalWalletHandler.PrivateWalletHandler;
 import org.springframework.stereotype.Service;
 import vendor.utils.GenericObjectConvert;
-import blockChain.transaction.nodeThreads.utils.TransactionUtils;
+import blockChain.transaction.consensus.ConsensusUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
@@ -19,7 +20,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import vendor.models.PrivateWallet;
 import vendor.models.Transaction;
-import vendor.models.TransactionContainerToEmit;
+import vendor.models.TransitTransaction;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -45,7 +46,7 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
     @Autowired
     TransactionUtils nodeUtils;
 
-    private static TransactionContainerToEmit bufferAcskTransaction;
+    private static TransitTransaction bufferAcskTransaction;
     private static PrivateWallet privateWallet;
 
     private static byte[] walletKey = new byte[]
@@ -77,8 +78,8 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
         }
     }
 
-    public TransactionContainerToEmit generateAckTransaction() throws URISyntaxException {
-        TransactionContainerToEmit askTransaction = new TransactionContainerToEmit();
+    public TransitTransaction generateAckTransaction() throws URISyntaxException {
+        TransitTransaction askTransaction = new TransitTransaction();
         askTransaction.setReceiverAddress(InitTransactionDetails.personnalWallet);
 
         PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler(InitTransactionDetails.remoteWallet.getAddress(), InitTransactionDetails.remoteWallet.getWalletId());
@@ -94,7 +95,7 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
     }
 
     public void sendAskTransaction() throws Exception { // socket send directely ! ! !
-        TransactionContainerToEmit askTransaction = generateAckTransaction();
+        TransitTransaction askTransaction = generateAckTransaction();
         String json = GenericObjectConvert.objectToString(askTransaction);
 
         Socket socket = new Socket(askTransaction.getReceiverAddress().getAddress().split(":")[0], Integer.parseInt(askTransaction.getReceiverAddress().getAddress().split(":")[1]));
@@ -105,7 +106,7 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
         writer.println();
     }
 
-    public void doTransaction(TransactionContainerToEmit cryptedTransaction) { // jury final // seller => pousser sur la block chaine apres validation
+    public void doTransaction(TransitTransaction cryptedTransaction) { // jury final // seller => pousser sur la block chaine apres validation
         try {
             String transaction2string = ChiffrementUtils.decryptAES(cryptedTransaction.getCryptedTransaction(), TransactionUtils.transactionPrivateKey);
             ObjectMapper objectMapper = new ObjectMapper();
@@ -134,7 +135,7 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-            TransactionContainerToEmit cryptedTransaction = nodeUtils.jsonToCryptedTransaction(in.readLine());
+            TransitTransaction cryptedTransaction = nodeUtils.jsonToCryptedTransaction(in.readLine());
 
             if (cryptedTransaction.getState().equals("ACK")) {//  state = feedback
                 ConsensusUtils.systemConsensusAckFeedBackTransactionPersisted(InitTransactionDetails.remoteWallet, walletKey, nodeUtils, cryptedTransaction);
@@ -172,7 +173,7 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
                     .lines()
                     .collect(Collectors.joining("\n"));
 
-            TransactionContainerToEmit returnedTransac = TransactionContainerToEmit.class.cast(GenericObjectConvert.stringToObject(data, TransactionContainerToEmit.class));
+            TransitTransaction returnedTransac = TransitTransaction.class.cast(GenericObjectConvert.stringToObject(data, TransitTransaction.class));
             System.out.println("push transaction to the block chain system : web service ");
             emitFeedBackBlockChainToSender(returnedTransac);
 
@@ -182,7 +183,7 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
     }
 
 
-    public void emitFeedBackBlockChainToSender(TransactionContainerToEmit cryptedTransaction) throws Exception {
+    public void emitFeedBackBlockChainToSender(TransitTransaction cryptedTransaction) throws Exception {
 
         nodeUtils.persistTransactionOnWallet(cryptedTransaction, TransactionUtils.transactionPrivateKey, InitTransactionDetails.remoteWallet);
 

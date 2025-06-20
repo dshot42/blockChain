@@ -1,9 +1,9 @@
 package blockChain.transaction.nodeThreads;
 
 import vendor.utils.GenericObjectConvert;
-import blockChain.transaction.nodeThreads.utils.TransactionUtils;
+import blockChain.nodeThreads.utils.TransactionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import vendor.models.TransactionContainerToEmit;
+import vendor.models.TransitTransaction;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -57,7 +57,7 @@ public class RunnableThreadProcess implements Runnable { // membre du jury
         out = new PrintWriter(clientSocket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-        TransactionContainerToEmit cryptedTransaction = nodeUtils.jsonToCryptedTransaction(in.readLine());
+        TransitTransaction cryptedTransaction = nodeUtils.jsonToCryptedTransaction(in.readLine());
         String thisHash = nodeUtils.hashTransaction(cryptedTransaction.getCryptedTransaction());
 
         if (nodeUtils.checkValidation(cryptedTransaction.getCryptedTransactionHash(), thisHash)) {
@@ -79,7 +79,7 @@ public class RunnableThreadProcess implements Runnable { // membre du jury
         cptMember++;
     }
 
-    private void sendToFinalDestinator(TransactionContainerToEmit cryptedTransaction, String cryptedTransationToString) throws Exception {
+    private void sendToFinalDestinator(TransitTransaction cryptedTransaction, String cryptedTransationToString) throws Exception {
         nodeUtils.socketEmitToNextThread(cryptedTransaction.getReceiverAddress().getAddress(), cryptedTransationToString);
     }
 

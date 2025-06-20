@@ -23,6 +23,7 @@ dependencies {
 
 	implementation project(path: ':vendor-bundle')
 	implementation project(path: ':wallet')
+	implementation project(path: ':consensus-middle-ware')
 
 	implementation project(path: ':chiffrement-utils')
 
@@ -38,5 +39,6 @@ dependencies {
 	/////////////// communication to nodejs front end ///////////////
 
 	implementation('io.socket:socket.io-client:2.0.0')
+    implementation project(path: ':consensus-middle-ware')
 }
 

@@ -1,8 +1,7 @@
 package blockChain;
 
-import blockChain.system.mongoDb.webSocket.MongoWebConsensusListener;
-import blockChain.transaction.initTransaction.initBlockChain.CreateBlockChain;
 import blockChain.transaction.buyer.SendTransactionProcess;
+import blockChain.transaction.consensus.webSocket.MongoWebConsensusListener;
 import blockChain.transaction.seller.AckAndReceiveTransactionProcess;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -11,16 +10,14 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @SpringBootApplication
-public class SpringMongoApplication {
+public class consensorApplication {
 
-    static CreateBlockChain createInitBlockChain;
     static SendTransactionProcess sendTransactionController;
     static AckAndReceiveTransactionProcess askTransactionController;
     static MongoWebConsensusListener mongoWebConsensusListener;
 
     @Autowired
-    public SpringMongoApplication(CreateBlockChain createInitBlockChain, SendTransactionProcess sendTransaction, AckAndReceiveTransactionProcess askTransactionController, MongoWebConsensusListener mongoWebConsensusListener) {
-        this.createInitBlockChain = createInitBlockChain;
+    public consensorApplication(SendTransactionProcess sendTransaction, AckAndReceiveTransactionProcess askTransactionController, MongoWebConsensusListener mongoWebConsensusListener) {
         this.sendTransactionController = sendTransaction;
         this.askTransactionController = askTransactionController;
         this.mongoWebConsensusListener = mongoWebConsensusListener;
@@ -47,9 +44,8 @@ public class SpringMongoApplication {
 
     public static void main(String[] args) throws Exception {
        // SpringWalletMain.main(args); // start wallet application
-        SpringApplication.run(SpringMongoApplication.class, args);
+        SpringApplication.run(consensorApplication.class, args);
        // PrivateWalletHandler.clearWallet(); // comment this line
-        createInitBlockChain.initBlockChain();
         System .out.println("Block chain system initialized");
         Thread systemSocketListener = new Thread(mongoWebConsensusListener); // acheteur
         systemSocketListener.start();

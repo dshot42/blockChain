@@ -1,4 +1,4 @@
-package blockChain.transaction.initTransaction.initBlockChain;
+package blockChain.system.mongoDb.initBlockChain;
 
 import blockChain.chiffrement.ChiffrementUtils;
 
