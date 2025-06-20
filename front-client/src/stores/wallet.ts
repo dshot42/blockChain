@@ -3,9 +3,9 @@ import axios from 'axios'
 import { ref, Ref } from 'vue'
 import { io } from 'socket.io-client'
 
-const walletAddress = 'http://127.0.0.1:8091'
+const walletAddress = 'http://localhost:8091'
 
-const consensusAddres = 'http://127.0.0.1:8090'
+const consensusAddress = 'http://localhost:8092'
 
 interface Transaction {
   id: number
@@ -54,13 +54,21 @@ export const useWalletStore = defineStore('wallet', () => {
 
   const sendTransaction = async () => {
     try {
-      transacPackage.value.from = walletstate.value.wallet?.address
+      transacPackage.value.from = 'Personnal'
 
       console.log('Transaction package:', transacPackage.value)
-      const response = await axios.post(
-        consensusAddres + '/api/transaction/send',
-        transacPackage.value,
-      )
+      const response = await axios
+        .post(consensusAddress + '/transaction/send', {
+          from: transacPackage.value.from,
+          to: transacPackage.value.to,
+          amount: transacPackage.value.amount,
+        })
+        .then(function (response) {
+          console.log(response)
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
     } catch (error) {
       console.error('Failed to send transaction:', error)
     }
@@ -94,7 +102,8 @@ export const useWalletStore = defineStore('wallet', () => {
     try {
       walletstate.value.refreshWallet = false
 
-      const data = (await axios.get(walletAddress + '/api/wallet/get')).data
+      //  const data = (await axios.get(walletAddress + '/api/wallet/get/{name}')).data
+      const data = (await axios.get(walletAddress + '/api/wallet/getDefaultWallet')).data
 
       walletstate.value.wallet = {
         address: data.address,

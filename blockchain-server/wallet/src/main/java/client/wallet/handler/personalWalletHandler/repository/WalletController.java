@@ -1,19 +1,22 @@
 package client.wallet.handler.personalWalletHandler.repository;
 
-import client.wallet.handler.personalWalletHandler.InitWallet;
+import client.wallet.handler.personalWalletHandler.InitTransactionDetails;
+
 import client.wallet.handler.personalWalletHandler.PrivateWalletHandler;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/wallet")
 public class WalletController {
 
-    @GetMapping("/get")
-    public Object getClientWallet() {
-        PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler("walletPersonnal", "Personnal");
+    @GetMapping("/getDefaultWallet")
+    public Object getDefaultWallet() throws Exception {
+        PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler();
         return ResponseEntity.ok(privateWalletHandler.getWallet());
     }
 
@@ -25,20 +28,20 @@ public class WalletController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return  ResponseEntity.ok("clear done");
+        return ResponseEntity.ok("clear done");
     }
 
-// todo remove et refaire les call sur port 8091 !
-    @GetMapping("/data/{name}")
-    public Object getClientWallet(@PathVariable(value = "name") String name) {
-        PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler(InitWallet.personnalWallet.getAddress(), InitWallet.personnalWallet.getWalletId());
+    @GetMapping("/get/{name}")
+    public Object getWallet(@PathVariable(value = "name") String name) {
+        PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler();
+        // pas de changement de port juste de nom pour les tests de differents wallet
         return ResponseEntity.ok(privateWalletHandler.getWallet());
     }
 
 
     @GetMapping("/refresh/{name}")
     public Object refreshWallet(@PathVariable(value = "name") String name) throws Exception {
-        PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler(name);
+        PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler();
         return ResponseEntity.ok(privateWalletHandler.refreshWallet());
     }
 }

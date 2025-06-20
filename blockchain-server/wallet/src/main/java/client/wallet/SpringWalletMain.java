@@ -2,7 +2,7 @@ package client.wallet;
 
 
 
-import client.wallet.handler.personalWalletHandler.InitWallet;
+import client.wallet.handler.personalWalletHandler.InitTransactionDetails;
 import client.wallet.handler.personalWalletHandler.PrivateWalletHandler;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -35,7 +35,6 @@ public class SpringWalletMain{
         System.out.println("Starting Wallet Application...");
         SpringApplication.run(SpringWalletMain.class, args);
         System.out.println("Check wallet : ");
-        Thread.sleep(10000); // wait for wallet to be ready
         checkWallet();
         System.out.println("Wallet is ready, launching transaction");
     }
@@ -43,7 +42,7 @@ public class SpringWalletMain{
 
     // todo isoler code
     private static void checkWallet() throws Exception {
-        PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler(InitWallet.personnalWallet.getAddress(), InitWallet.personnalWallet.getWalletId());
+        PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler();
         privateWalletHandler.testWallet();
     }
 

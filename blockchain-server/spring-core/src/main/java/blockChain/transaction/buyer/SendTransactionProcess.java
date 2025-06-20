@@ -2,7 +2,7 @@ package blockChain.transaction.buyer;
 
 import blockChain.chiffrement.ChiffrementUtils;
 import blockChain.transaction.consensus.ConsensusUtils;
-import client.wallet.handler.personalWalletHandler.InitWallet;
+import client.wallet.handler.personalWalletHandler.InitTransactionDetails;
 import client.wallet.handler.personalWalletHandler.PrivateWalletHandler;
 import vendor.utils.GenericObjectConvert;
 import blockChain.transaction.nodeThreads.utils.TransactionUtils;
@@ -73,7 +73,7 @@ public class SendTransactionProcess implements Runnable { // processus de l'ache
     private static Transaction MapperTransaction(TransactionContainerToEmit askTransaction) throws URISyntaxException {
         Transaction transaction = new Transaction();
         transaction.setReceiverAddress(askTransaction.getSenderAddress()); // address communiqué
-        PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler(InitWallet.personnalWallet.getAddress(), InitWallet.personnalWallet.getWalletId());
+        PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler(InitTransactionDetails.personnalWallet.getAddress(), InitTransactionDetails.personnalWallet.getWalletId());
 
         PrivateWallet myPrivateWallet = privateWalletHandler.getWallet();
 
@@ -85,7 +85,7 @@ public class SendTransactionProcess implements Runnable { // processus de l'ache
 
 
     public void socketClientStart() throws Exception {
-        ServerSocket serverSocket = new ServerSocket(Integer.parseInt(InitWallet.personnalWallet.getAddress().split(":")[1]));
+        ServerSocket serverSocket = new ServerSocket(Integer.parseInt(InitTransactionDetails.personnalWallet.getAddress().split(":")[1]));
         while (true) {
             Socket clientSocket = serverSocket.accept();
             out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -102,7 +102,7 @@ public class SendTransactionProcess implements Runnable { // processus de l'ache
                 // second scenario => consensus
                 emitBroadcastCryptedTransactionOnConsensus(generateCryptedTransaction(cryptedTransaction, ChiffrementUtils.systemKey)); // systeme key
             } else if (cryptedTransaction.getState().equals("ACK")) { //  retour apres persistance block chaine
-                ConsensusUtils.systemConsensusAckFeedBackTransactionPersisted(InitWallet.personnalWallet, walletKey, nodeUtils, cryptedTransaction);
+                ConsensusUtils.systemConsensusAckFeedBackTransactionPersisted(InitTransactionDetails.personnalWallet, walletKey, nodeUtils, cryptedTransaction);
                 System.out.println("Fin de la transaction par Consensus ! (SENDER)");
             }
         }

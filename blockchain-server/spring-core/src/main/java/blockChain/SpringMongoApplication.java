@@ -4,8 +4,6 @@ import blockChain.system.mongoDb.webSocket.MongoWebConsensusListener;
 import blockChain.transaction.initTransaction.initBlockChain.CreateBlockChain;
 import blockChain.transaction.buyer.SendTransactionProcess;
 import blockChain.transaction.seller.AckAndReceiveTransactionProcess;
-import client.wallet.handler.personalWalletHandler.InitWallet;
-import client.wallet.handler.personalWalletHandler.PrivateWalletHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -56,7 +54,7 @@ public class SpringMongoApplication {
         Thread systemSocketListener = new Thread(mongoWebConsensusListener); // acheteur
         systemSocketListener.start();
         System .out.println("Consensus System socket listener is instantiated and currently running");
-        Thread.sleep(15000);
+        Thread.sleep(10000); // wait consensor and wallet to be ready
         launchTransaction();
     }
 

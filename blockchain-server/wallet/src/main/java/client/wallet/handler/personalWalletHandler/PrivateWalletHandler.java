@@ -3,6 +3,7 @@ package client.wallet.handler.personalWalletHandler;
 import blockChain.chiffrement.ChiffrementUtils;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import vendor.models.PrivateWallet;
 import vendor.models.PublicWallet;
 import vendor.models.Transaction;
@@ -17,7 +18,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-@Component
+
+@Service
 public class PrivateWalletHandler {
 
     public final static String DIRECTORY = "/private-wallet/wallet/";
@@ -33,13 +35,10 @@ public class PrivateWalletHandler {
      private static final String ROOTPROJECT = Paths.get("").toAbsolutePath().getParent().toString();
 
     public PrivateWalletHandler() {
-    }
-
-
-    public PrivateWalletHandler(String id) {
-        this.walletId = id;
+        this.walletId = "Personnal";
         this.filePath = ROOTPROJECT + DIRECTORY + "wallet" + this.walletId + ".txt";
     }
+
 
     public PrivateWalletHandler(String address, String id) {
         this.walletId = id;
@@ -84,6 +83,8 @@ public class PrivateWalletHandler {
         } catch (Exception e) {
             throw new RuntimeException("Fail to persist Wallet , " + e);
         }
+        System.out.println("[SUCCES] Wallet  : "+ personnalWallet.walletId);
+
         return personnalWallet;
     }
 

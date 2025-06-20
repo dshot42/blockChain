@@ -3,5 +3,4 @@ rootProject.name = 'crypto-block-chain'
 include 'spring-core','chiffrement-utils'
 include 'vendor-bundle'
 include 'wallet'
-include 'consensusMiddleWare'
 

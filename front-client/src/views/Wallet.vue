@@ -46,7 +46,7 @@ onMounted(() => {
     <div class="emit-transaction">
       <div>
         <label for="toAddress">To Address:</label>
-        <input id="toAddress" v-model="walletStore.transacPackage.toAddress" required />
+        <input id="toAddress" v-model="walletStore.transacPackage.to" required />
       </div>
       <div>
         <label for="amount">Amount:</label>
