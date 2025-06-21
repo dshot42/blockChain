@@ -1,8 +1,7 @@
 package blockChain.transaction.consensus;
 
-import blockChain.nodeThreads.utils.TransactionUtils;
 import vendor.utils.GenericObjectConvert;
-import blockChain.transaction.consensus.ConsensusUtils;
+import blockChain.nodeThreads.utils.TransactionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import vendor.models.TransitTransaction;
 
@@ -22,14 +21,10 @@ public class ConsensusThreadProcess implements Runnable { // membre du jury
 
     public String ip;
 
-    public String nextMember;
-
     @Autowired
     TransactionUtils nodeUtils;
 
     public boolean isReady = false;
-
-    private static int cptMember = 0;
 
     @Autowired
     public ConsensusThreadProcess(String ip, TransactionUtils nodeUtils) {
@@ -54,7 +49,6 @@ public class ConsensusThreadProcess implements Runnable { // membre du jury
     }
 
     private void triggerRecipeEvent() throws Exception {
-        System.out.println("ConsensusThreadProcess() triggerRecipeEvent ");
         out = new PrintWriter(clientSocket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         TransitTransaction transitTransaction = nodeUtils.jsonToCryptedTransaction(in.readLine());

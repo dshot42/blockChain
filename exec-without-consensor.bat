@@ -10,5 +10,4 @@ start cmd /K  launcher.bat
 
 cd /d "..\blockchain-server\"
 start cmd /K gradle :block-chain-core:run 
-start cmd /K gradle :consensus-middle-ware:run 
 start cmd /K gradle :wallet:run 

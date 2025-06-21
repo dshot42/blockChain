@@ -1,7 +1,7 @@
 package vendor.models;
 
 
-public class TransactionContainerToEmit {
+public class TransitTransaction {
 
     String state; // enum => ack, sendTransaction, feedBack (retour donnée)
     PublicWallet receiverAddress;

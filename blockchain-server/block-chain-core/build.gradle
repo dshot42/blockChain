@@ -7,8 +7,7 @@ plugins {
 
 
 application {
-	mainClass = 'blockChain.SpringMongoApplication'
-
+	mainClass = 'blockChain.BlockChainCoreApplication'
 }
 
 
@@ -23,15 +22,12 @@ dependencies {
 
 	implementation project(path: ':vendor-bundle')
 	implementation project(path: ':wallet')
-	implementation project(path: ':consensus-middle-ware')
-
+	 implementation project(path: ':consensus-middle-ware')
 	implementation project(path: ':chiffrement-utils')
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
-
-
 
 	implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
 	implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5'
@@ -39,6 +35,5 @@ dependencies {
 	/////////////// communication to nodejs front end ///////////////
 
 	implementation('io.socket:socket.io-client:2.0.0')
-    implementation project(path: ':consensus-middle-ware')
 }
 

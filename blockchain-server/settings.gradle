@@ -1,6 +1,7 @@
-rootProject.name = 'crypto-block-chain'
+rootProject.name = 'blockchain-server'
 
-include 'spring-core','chiffrement-utils'
+include 'block-chain-core','chiffrement-utils'
 include 'vendor-bundle'
 include 'wallet'
+include 'consensus-middle-ware'
 

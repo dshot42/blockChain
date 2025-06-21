@@ -5,11 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c1a40880-6b52-4b3a-aad7-659c72ee6de1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/git-command.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/blockchain-server/spring-core/src/main/resources/wallet/walletBuyer.txt" beforeDir="false" afterPath="$PROJECT_DIR$/blockchain-server/spring-core/src/main/resources/wallet/walletBuyer.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/blockchain-server/spring-core/src/main/resources/wallet/walletSeller.txt" beforeDir="false" afterPath="$PROJECT_DIR$/blockchain-server/spring-core/src/main/resources/wallet/walletSeller.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/block/Block chain.docx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/block/Diagramme sans nom(51)(13).drawio" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blockchain-server/block-chain-core/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/blockchain-server/block-chain-core/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/blockchain-server/block-chain-core/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blockchain-server/block-chain-core/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/blockchain-server/block-chain-core/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/blockchain-server/block-chain-core/settings.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/blockchain-server/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/blockchain-server/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/blockchain-server/exec.bat" beforeDir="false" afterPath="$PROJECT_DIR$/blockchain-server/exec.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/blockchain-server/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/blockchain-server/settings.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/blockchain-server/vendor-bundle/src/main/java/vendor/models/TransitTransaction.java" beforeDir="false" afterPath="$PROJECT_DIR$/blockchain-server/vendor-bundle/src/main/java/vendor/models/TransitTransaction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/blockchain-server/wallet/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/blockchain-server/wallet/settings.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main-exec.bat" beforeDir="false" afterPath="$PROJECT_DIR$/main-exec.bat" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

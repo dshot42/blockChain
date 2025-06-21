@@ -1,4 +1,4 @@
-rootProject.name = 'crypto-block-chain'
+rootProject.name = 'wallet'
 
 include 'chiffrement-utils'
 include 'vendor-bundle'
