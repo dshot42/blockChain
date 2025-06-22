@@ -1,6 +1,5 @@
 package blockChain;
 
-import blockChain.transaction.consensus.webSocket.ThreadPoolHandler;
 import blockChain.transaction.buyer.SendTransactionProcess;
 import blockChain.transaction.seller.AckAndReceiveTransactionProcess;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +13,12 @@ import org.springframework.context.annotation.Configuration;
 
         static SendTransactionProcess sendTransactionController;
         static AckAndReceiveTransactionProcess askTransactionController;
-        static ThreadPoolHandler threadPoolHandler;
+
 
         @Autowired
-        public ConsensusSpringApplication( SendTransactionProcess sendTransaction, AckAndReceiveTransactionProcess askTransactionController, ThreadPoolHandler threadPoolHandler) {
+        public ConsensusSpringApplication( SendTransactionProcess sendTransaction, AckAndReceiveTransactionProcess askTransactionController) {
             this.sendTransactionController = sendTransaction;
             this.askTransactionController = askTransactionController;
-            this.threadPoolHandler = threadPoolHandler;
 
         }
 
@@ -32,12 +30,12 @@ import org.springframework.context.annotation.Configuration;
          * ***************    SCENARIO    **************
          *    lacheteur envoi un message au vendeur pour une demande de transaction
          *    le vendeur (tiers de confiace) renvoir un ackTransaction avec son address sa clef et le montant !
-         *    lacheteur renvoie toutes les informations chiffré avec la clef  au vendeur par le bien d'un noeud
+         *    lacheteur renvoie toutes les informations chiffré avec la clef  au vendeur par le bief d'un noeud
 
 
          * ***************    SCENARIO 2   **************
          *    lacheteur envoi un message au vendeur pour une demande de transaction
-         *    le vendeur (tiers de confiace) renvoir un ackTransaction avec son address sa clef et le montant !
+         *    le vendeur (tiers de confiance) recoit un ackTransaction avec son address, sa clef et le montant !
          *    lacheteur renvoie toutes les informations chiffré au systeme et la transaction est validé par
          *    un consensus !
          */
@@ -45,8 +43,6 @@ import org.springframework.context.annotation.Configuration;
         public static void main(String[] args) throws InterruptedException {
             System .out.println("Consensus System socket listener is instantiated and currently running");
             SpringApplication.run(ConsensusSpringApplication.class, args);
-            Thread systemSocketListener = new Thread(threadPoolHandler); // acheteur
-            systemSocketListener.start();
 
              initTransactionController(); // pour test
         }

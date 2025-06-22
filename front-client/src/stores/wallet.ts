@@ -39,6 +39,8 @@ interface TransactionPackage {
   amount: number
 }
 
+const walletId = 'Personnal'
+
 export const useWalletStore = defineStore('wallet', () => {
   const walletstate = ref<WalletState>({
     wallet: undefined,
@@ -54,7 +56,7 @@ export const useWalletStore = defineStore('wallet', () => {
 
   const sendTransaction = async () => {
     try {
-      transacPackage.value.from = 'Personnal'
+      transacPackage.value.from = walletId
 
       console.log('Transaction package:', transacPackage.value)
       const response = await axios
@@ -109,9 +111,9 @@ export const useWalletStore = defineStore('wallet', () => {
         address: data.address,
         id: data.walletId,
         cryptedContent: data.cryptedContent,
-        amount: Array.isArray(data.transactions)
-          ? data.transactions.reduce((acc: any, tx: any) => acc + (tx.amount || 0), 0)
-          : 0,
+        amount: Array.from(data.transactions).reduce((acc: number, tx: any) => {
+          return acc + (tx.senderAddress.walletId === walletId ? -tx.amount : tx.amount)
+        }, 0),
         transactions: Array.isArray(data.transactions)
           ? data.transactions.map((trans: any) => ({
               id: trans.id,
@@ -126,6 +128,8 @@ export const useWalletStore = defineStore('wallet', () => {
             }))
           : [],
       }
+
+      console.log(data.transactions[0])
       console.log(walletstate.value.wallet.transactions[0])
       walletstate.value.refreshWallet = true
     } catch (error) {

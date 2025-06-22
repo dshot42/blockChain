@@ -1,6 +1,6 @@
-package blockChain;
+package consensus;
 
-import blockChain.system.mongoDb.webSocket.MongoWebConsensusListener;
+import consensus.service.ActorPoolHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,15 +8,12 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @SpringBootApplication
-public class BlockChainCoreApplication {
-
-    static MongoWebConsensusListener mongoWebConsensusListener;
+public class ConsensusApplication {
+    ActorPoolHandler actorPoolHandler;
 
     @Autowired
-    public BlockChainCoreApplication(MongoWebConsensusListener mongoWebConsensusListener) {
-
-        this.mongoWebConsensusListener = mongoWebConsensusListener;
-
+    public ConsensusApplication(ActorPoolHandler actorPoolHandler) {
+        this.actorPoolHandler = actorPoolHandler;
     }
 
     /***
@@ -27,21 +24,20 @@ public class BlockChainCoreApplication {
      * ***************    SCENARIO    **************
      *    lacheteur envoi un message au vendeur pour une demande de transaction
      *    le vendeur (tiers de confiace) renvoir un ackTransaction avec son address sa clef et le montant !
-     *    lacheteur renvoie toutes les informations chiffré avec la clef  au vendeur par le bien d'un noeud
+     *    lacheteur renvoie toutes les informations chiffré avec la clef  au vendeur par le bief d'un noeud
 
 
      * ***************    SCENARIO 2   **************
      *    lacheteur envoi un message au vendeur pour une demande de transaction
-     *    le vendeur (tiers de confiace) renvoir un ackTransaction avec son address sa clef et le montant !
+     *    le vendeur (tiers de confiance) recoit un ackTransaction avec son address, sa clef et le montant !
      *    lacheteur renvoie toutes les informations chiffré au systeme et la transaction est validé par
      *    un consensus !
      */
 
-    public static void main(String[] args) throws Exception {
-        SpringApplication.run(BlockChainCoreApplication.class, args);
+    public static void main(String[] args) {
+        SpringApplication.run(ConsensusApplication.class, args);
+        System .out.println("Consensus System socket listener is instantiated and currently running");
 
-        Thread systemSocketListener = new Thread(mongoWebConsensusListener); // acheteur
-        systemSocketListener.start();
 
     }
 

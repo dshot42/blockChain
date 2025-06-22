@@ -53,14 +53,13 @@ public class TransactionUtils {
     }
 
     public void socketEmitToNextThread(String member, String cryptedTransaction2String) throws Exception {
-        System.out.println("next ! " + member);
+        System.out.println("consensus member :  " + member);
         Socket socket = new Socket(member.split(":")[0], Integer.parseInt(member.split(":")[1]));
         OutputStream output = socket.getOutputStream();
         byte[] data = cryptedTransaction2String.getBytes();
         output.write(data);
         PrintWriter writer = new PrintWriter(output, true);
         writer.println();
-        System.out.println("Send Crypted transaction to member : " + member);
     }
 
 
@@ -89,19 +88,20 @@ public class TransactionUtils {
     }
 
     public static void persistTransactionOnWallet(TransitTransaction cryptedTransaction, byte[] privateKey, PublicWallet publicWallet) throws Exception {
-        System.out.println("persistTransactionOnWallet => Transaction received from the consensus system : " + publicWallet.getWalletId());
+
         Transaction transaction = Transaction.class.cast(GenericObjectConvert
                 .stringToObject(ChiffrementUtils.decryptAES(cryptedTransaction.getCryptedTransaction(), ChiffrementUtils.systemKey), Transaction.class));
 
-        persistTransactionOnWallet(transaction, publicWallet);
+        persistTransactionOnWallet(transaction, privateKey, publicWallet);
     }
 
-    public static void persistTransactionOnWallet(Transaction transaction, PublicWallet publicWallet) throws Exception {
+    public static void persistTransactionOnWallet(Transaction transaction, byte[] privateKey, PublicWallet publicWallet) throws Exception {
 
         PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler(publicWallet.getAddress(), publicWallet.getWalletId());
         privateWalletHandler.insertNewTransaction(transaction);
         System.out.println("new Transaction inserted into the user's wallet : " + publicWallet.getWalletId());
     }
+
 
     public static Class<?> getClassForName(String element) throws ClassNotFoundException {
         return Class.forName(element);

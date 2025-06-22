@@ -1,9 +1,10 @@
 package blockChain.transaction.consensus;
 
-import vendor.utils.GenericObjectConvert;
 import blockChain.nodeThreads.utils.TransactionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import vendor.models.TransitTransaction;
+import vendor.utils.GenericObjectConvert;
+import org.springframework.beans.factory.annotation.Autowired;
+
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -13,6 +14,7 @@ import java.net.Socket;
 
 public class ConsensusThreadProcess implements Runnable { // membre du jury
 
+    public static String systemSocketAddress = "127.0.0.1:6666";
     private static ServerSocket serverSocket;
     private static Socket clientSocket;
     private static PrintWriter out;
@@ -21,10 +23,14 @@ public class ConsensusThreadProcess implements Runnable { // membre du jury
 
     public String ip;
 
+    public String nextMember;
+
     @Autowired
     TransactionUtils nodeUtils;
 
     public boolean isReady = false;
+
+    private static int cptMember = 0;
 
     @Autowired
     public ConsensusThreadProcess(String ip, TransactionUtils nodeUtils) {
@@ -51,11 +57,11 @@ public class ConsensusThreadProcess implements Runnable { // membre du jury
     private void triggerRecipeEvent() throws Exception {
         out = new PrintWriter(clientSocket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        TransitTransaction transitTransaction = nodeUtils.jsonToCryptedTransaction(in.readLine());
-        String thisHash = nodeUtils.hashTransaction(transitTransaction.getCryptedTransaction());
-        transitTransaction.setCryptedTransactionHash(thisHash);
+        TransitTransaction transactionContainerToEmit = nodeUtils.jsonToCryptedTransaction(in.readLine());
+        String thisHash = nodeUtils.hashTransaction(transactionContainerToEmit.getCryptedTransaction());
+        transactionContainerToEmit.setCryptedTransactionHash(thisHash);
         Thread.sleep(100); // cela serait mieux avec un ack, verifier que les socket member sont ready !
-        ConsensusUtils.sendTransactionToBlockChainSystem(GenericObjectConvert.objectToString(transitTransaction));
+        ConsensusUtils.sendTransactionToBlockChainSystem(GenericObjectConvert.objectToString(transactionContainerToEmit));
     }
 
 

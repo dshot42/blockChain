@@ -1,7 +1,9 @@
 rootProject.name = 'blockchain-server'
 
-include 'block-chain-core','chiffrement-utils'
+include 'block-chain-core'
+include 'chiffrement-utils'
 include 'vendor-bundle'
 include 'wallet'
 include 'consensus-middle-ware'
+include 'consensus-middle-ware-new'
 

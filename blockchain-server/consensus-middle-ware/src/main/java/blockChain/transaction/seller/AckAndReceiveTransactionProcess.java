@@ -6,8 +6,8 @@ import blockChain.nodeThreads.utils.TransactionUtils;
 import blockChain.transaction.consensus.ConsensusUtils;
 import client.wallet.handler.personalWalletHandler.InitTransactionDetails;
 import client.wallet.handler.personalWalletHandler.PrivateWalletHandler;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.stereotype.Service;
+import vendor.models.TransitTransaction;
 import vendor.utils.GenericObjectConvert;
 
 
@@ -21,11 +21,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import vendor.models.PrivateWallet;
 import vendor.models.Transaction;
-import vendor.models.TransitTransaction;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -34,10 +31,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,12 +48,19 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
     TransactionUtils nodeUtils;
 
     private static TransitTransaction bufferAcskTransaction;
+    private static PrivateWallet privateWallet;
 
+    private static byte[] walletKey = new byte[]
+            {-95, -14, 120, 61, 45, 104, 101, -13, -98, -20, -69, -41,
+                    -97, 83, 46, 75, -104, 105, -3, 111, -125, -90, -11,
+                    -8, 60, 69, 38, -33, 78, 55, -65, 104};
 
 
     @Override
     public void run() {
         try {
+            PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler(InitTransactionDetails.remoteWallet.getAddress(), InitTransactionDetails.remoteWallet.getWalletId());
+            privateWallet = privateWalletHandler.getWallet();
 
             new Thread(new Runnable() {
                 public void run() {
@@ -76,22 +78,23 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
         }
     }
 
-    public static TransitTransaction generateAckTransaction() throws JsonProcessingException {
+    public static TransitTransaction generateAckTransaction() throws URISyntaxException {
         TransitTransaction askTransaction = new TransitTransaction();
         askTransaction.setReceiverAddress(InitTransactionDetails.personnalWallet);
 
-        PrivateWalletHandler privatePrivateWalletHandler = new PrivateWalletHandler(InitTransactionDetails.remoteWallet.getAddress(), InitTransactionDetails.remoteWallet.getWalletId());
-        PrivateWallet myPrivateWallet = privatePrivateWalletHandler.getWallet();
-        askTransaction.setSenderAddress(privatePrivateWalletHandler.mapPrivateToPublicWaller(myPrivateWallet));
+        PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler(InitTransactionDetails.remoteWallet.getAddress(), InitTransactionDetails.remoteWallet.getWalletId());
+        PrivateWallet myPrivateWallet = privateWalletHandler.getWallet();
+        askTransaction.setSenderAddress(privateWalletHandler.mapPrivateToPublicWaller(myPrivateWallet));
         askTransaction.setDateTime(LocalDateTime.now().toString());
+        askTransaction.setKey(TransactionUtils.transactionPrivateKey);
         askTransaction.setState("SYN");
-
-        askTransaction.setAmount((float)InitTransactionDetails.transacAmount);
+        Random random = new Random();
+        askTransaction.setAmount(random.nextInt(1000));
         bufferAcskTransaction = askTransaction;
         return askTransaction;
     }
 
-    public static void sendAskTransaction() throws Exception { // init process of transaction message !
+    public static void sendAskTransaction() throws Exception { // socket send directely ! ! !
         TransitTransaction askTransaction = generateAckTransaction();
         String json = GenericObjectConvert.objectToString(askTransaction);
 
@@ -103,9 +106,9 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
         writer.println();
     }
 
-    public void doTransaction(TransitTransaction cryptedTransaction) throws Exception { // jury final // seller => pousser sur la block chaine apres validation
-
-            String transaction2string = ChiffrementUtils.decryptAES(cryptedTransaction.getCryptedTransaction(), ChiffrementUtils.systemKey);
+    public void doTransaction(TransitTransaction cryptedTransaction) { // jury final // seller => pousser sur la block chaine apres validation
+        try {
+            String transaction2string = ChiffrementUtils.decryptAES(cryptedTransaction.getCryptedTransaction(), TransactionUtils.transactionPrivateKey);
             ObjectMapper objectMapper = new ObjectMapper();
             Transaction transaction = objectMapper.readValue(transaction2string, Transaction.class);
             String thisHash = ChiffrementUtils.cryptAES(transaction2string, ChiffrementUtils.systemKey);
@@ -113,18 +116,20 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
             if (bufferAcskTransaction.getAmount() == transaction.getAmount() &&
                     transaction.getSenderAddress().getWalletId().equals(bufferAcskTransaction.getReceiverAddress().getWalletId()) &&
                     transaction.getReceiverAddress().getWalletId().equals(bufferAcskTransaction.getSenderAddress().getWalletId())) {
-                     sendTransactionOnBlockChain(ChiffrementUtils.cryptAES(GenericObjectConvert.objectToString(transaction)));
+                //  transaction.setHash(ChiffrementUtils.cryptAES(thisHash)); // on devrait meme le faire du coté system
+                pushTransactionOnBlockChain(transaction);
             } else {
                 System.out.println("les informations de transaction sont incorrects ! ");
             }
 
-
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void socketClientStart() throws Exception {
         serverSocket = new ServerSocket(Integer.parseInt(InitTransactionDetails.remoteWallet.getAddress().split(":")[1]));
         while (true) {
-            System.out.println("Attente de la transaction du buyer ...");
             clientSocket = serverSocket.accept(); // attente de la transaction du buyer
             // thread blocké en mode listener
             out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -132,30 +137,27 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
 
             TransitTransaction cryptedTransaction = nodeUtils.jsonToCryptedTransaction(in.readLine());
 
-            if (cryptedTransaction.getState().equals("SYNACK")) {//  state = feedback
+            if (cryptedTransaction.getState().equals("ACK")) {//  state = feedback
+                ConsensusUtils.systemConsensusAckFeedBackTransactionPersisted(InitTransactionDetails.remoteWallet, walletKey, nodeUtils, cryptedTransaction);
+                System.out.println("Fin de la transaction par Consensus ! (RECEIVER)");
+                break;
+            } else if (cryptedTransaction.getState().equals("SYNACK")) {
                 String thisHash = nodeUtils.hashTransaction(cryptedTransaction.getCryptedTransaction());
                 System.out.println("SENDTRASACTION recive");
                 if (nodeUtils.checkValidation(cryptedTransaction.getCryptedTransactionHash(), thisHash)) {
                     doTransaction(cryptedTransaction);
                 } else
                     throw new Exception("Transaction validation failed, hash mismatch ! ");
-
-            } else if (cryptedTransaction.getState().equals("ACK")) {
-                ConsensusUtils.systemConsensusAckFeedBackTransactionPersisted(InitTransactionDetails.remoteWallet, cryptedTransaction);
-                System.out.println("Fin de la transaction par Consensus ! (RECEIVER)");
-                break;
             }
         }
-
         System.out.println("Transaction with Consensor process finished  ! ");
 
     }
 
 
-    public void sendTransactionOnBlockChain(String cryptedTransac) throws Exception {
-        // problem here
+    public void pushTransactionOnBlockChain(Transaction transaction) throws Exception {
 
-        StringEntity entity = new StringEntity(cryptedTransac,
+        StringEntity entity = new StringEntity(ChiffrementUtils.cryptAES(GenericObjectConvert.objectToString(transaction)),
                 ContentType.APPLICATION_FORM_URLENCODED);
 
         DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -163,29 +165,31 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
         HttpPost request = new HttpPost("http://localhost:8090/MongoDb/BlockChain/transaction");
         request.addHeader("content-type", "application/json");
         request.setEntity(entity);
-        CloseableHttpResponse response = httpClient.execute(request);
-        HttpEntity respEntity = response.getEntity();
+        try {
+            CloseableHttpResponse response = httpClient.execute(request);
+            HttpEntity respEntity = response.getEntity();
+            String data = new BufferedReader(new InputStreamReader(respEntity.getContent(),
+                    StandardCharsets.UTF_8))
+                    .lines()
+                    .collect(Collectors.joining("\n"));
 
-        System.out.println("BlockChain/transaction RESPONSE : " + response.getStatusLine().getStatusCode());
+            TransitTransaction returnedTransac = TransitTransaction.class.cast(GenericObjectConvert.stringToObject(data, TransitTransaction.class));
+            System.out.println("push transaction to the block chain system : web service ");
+            emitFeedBackBlockChainToSender(returnedTransac);
 
-        String data = new BufferedReader(new InputStreamReader(respEntity.getContent(),
-                StandardCharsets.UTF_8))
-                .lines()
-                .collect(Collectors.joining("\n"));
-
-        TransitTransaction returnedTransac = TransitTransaction.class.cast(GenericObjectConvert.stringToObject(data, TransitTransaction.class));
-        emitFeedBackBlockChainToSender(returnedTransac);
+        } catch (Exception e) {
+            System.out.println("Erreur lors de la communication avec le serveur, POST on block chain, "+ e);
+        }
     }
 
 
     public void emitFeedBackBlockChainToSender(TransitTransaction cryptedTransaction) throws Exception {
-        System.out.println(cryptedTransaction.getSenderAddress());
-        nodeUtils.persistTransactionOnWallet(cryptedTransaction,cryptedTransaction.getKey(), InitTransactionDetails.remoteWallet);
+        nodeUtils.persistTransactionOnWallet(cryptedTransaction, TransactionUtils.transactionPrivateKey, InitTransactionDetails.personnalWallet);
+        nodeUtils.persistTransactionOnWallet(cryptedTransaction, TransactionUtils.transactionPrivateKey, InitTransactionDetails.remoteWallet);
+
 
         String json = GenericObjectConvert.objectToString(cryptedTransaction);
 
-        // fixme => pas d'addresse en feedback , deja checker ce qui part /transaction
-        System.out.println("Transaction feedback to sender : "+ cryptedTransaction.getSenderAddress().getAddress());
         Socket socket = new Socket(cryptedTransaction.getSenderAddress().getAddress().split(":")[0], Integer.parseInt(cryptedTransaction.getSenderAddress().getAddress().split(":")[1]));
         OutputStream output = socket.getOutputStream();
         output.write(json.getBytes());

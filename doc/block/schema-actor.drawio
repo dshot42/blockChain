@@ -1,0 +1,165 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:139.0) Gecko/20100101 Firefox/139.0" version="27.1.6">
+  <diagram name="Page-1" id="64uJejcpYzl9K-WdKOxQ">
+    <mxGraphModel dx="948" dy="543" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-2" value="" style="endArrow=none;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="220" y="630" as="sourcePoint" />
+            <mxPoint x="220" y="120" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-3" value="" style="endArrow=none;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="630" as="sourcePoint" />
+            <mxPoint x="390" y="120" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-4" value="" style="endArrow=none;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="570" y="630" as="sourcePoint" />
+            <mxPoint x="570" y="120" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-5" value="Wallet" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="160" y="70" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-6" value="Decentralized consensus" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="70" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-7" value="BlockChain System" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="510" y="70" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-8" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="220" y="150" as="sourcePoint" />
+            <mxPoint x="570" y="150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-9" value="&amp;nbsp;Send Private Key&amp;nbsp;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="xEZ9Hn5PChgKrY2htqAI-8">
+          <mxGeometry x="-0.163" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-10" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="220" y="240" as="sourcePoint" />
+            <mxPoint x="390" y="240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-11" value="&amp;nbsp;SendTransaction&amp;nbsp;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="xEZ9Hn5PChgKrY2htqAI-10">
+          <mxGeometry x="-0.163" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-12" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="280" as="sourcePoint" />
+            <mxPoint x="560" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-16" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="570" y="435" as="sourcePoint" />
+            <mxPoint x="570" y="475" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="660" y="435" />
+              <mxPoint x="660" y="475" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-17" value="&lt;div&gt;Decrypte transaction&amp;nbsp;&lt;/div&gt;&lt;div&gt;&amp;amp;&amp;amp; archived on blockChain&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="xEZ9Hn5PChgKrY2htqAI-16">
+          <mxGeometry x="-0.163" y="1" relative="1" as="geometry">
+            <mxPoint y="18" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-18" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="570" y="515" as="sourcePoint" />
+            <mxPoint x="220" y="515" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-19" value="FeedBack crypted Transaction with blockChain Hash" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="xEZ9Hn5PChgKrY2htqAI-18">
+          <mxGeometry x="-0.163" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-20" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="220" y="190" as="sourcePoint" />
+            <mxPoint x="570" y="190" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="310" y="190" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-21" value="Synchonisation - Chech Wallet Integrity&amp;nbsp;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="xEZ9Hn5PChgKrY2htqAI-20">
+          <mxGeometry x="-0.163" y="1" relative="1" as="geometry">
+            <mxPoint x="24" y="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-23" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="570" y="200" as="sourcePoint" />
+            <mxPoint x="220" y="200" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="570" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-25" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="220" y="545" as="sourcePoint" />
+            <mxPoint x="220" y="585" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="310" y="545" />
+              <mxPoint x="310" y="585" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-26" value="&lt;div&gt;Decrypt Transaction&amp;nbsp;&lt;/div&gt;&lt;div&gt;&amp;amp;&amp;amp; persited on Wallet&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="xEZ9Hn5PChgKrY2htqAI-25">
+          <mxGeometry x="-0.163" y="1" relative="1" as="geometry">
+            <mxPoint y="18" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-31" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="300" as="sourcePoint" />
+            <mxPoint x="560" y="300" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-32" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="320" as="sourcePoint" />
+            <mxPoint x="560" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-33" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="340" as="sourcePoint" />
+            <mxPoint x="560" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-30" value="&lt;div align=&quot;center&quot;&gt;Multi Threading Actor System&amp;nbsp;&lt;/div&gt;&lt;div align=&quot;center&quot;&gt;-&lt;/div&gt;&lt;div align=&quot;center&quot;&gt;&amp;nbsp;SendTransaction&amp;nbsp;&lt;/div&gt;" style="text;whiteSpace=wrap;html=1;align=center;fillColor=default;" vertex="1" parent="1">
+          <mxGeometry x="430" y="272" width="100" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-34" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="570" y="370" as="sourcePoint" />
+            <mxPoint x="570" y="410" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="660" y="370" />
+              <mxPoint x="660" y="410" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xEZ9Hn5PChgKrY2htqAI-35" value="&lt;div&gt;Get all transactions from consensus Actor,&lt;/div&gt;&lt;div&gt;Check hash of transaction data to valided integrity&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="xEZ9Hn5PChgKrY2htqAI-34">
+          <mxGeometry x="-0.163" y="1" relative="1" as="geometry">
+            <mxPoint y="18" as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,18 +1,30 @@
 package client.wallet.handler.personalWalletHandler;
 
 import blockChain.chiffrement.ChiffrementUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
 import vendor.models.PrivateWallet;
 import vendor.models.PublicWallet;
 import vendor.models.Transaction;
+import vendor.models.TransitTransaction;
 import vendor.utils.GenericObjectConvert;
 
 import java.io.*;
 import java.net.Socket;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -28,7 +40,7 @@ public class PrivateWalletHandler {
 
     public String address;
 
-    private static byte[] walletPrivateKey = new byte[]{-95, -14, 120, 61, 45, 104, 101, -13, -98, -20, -69, -41, -97, 83, 46, 75, -104, 105, -3, 111, -125, -90, -11, -8, 60, 69, 38, -33, 78, 55, -65, 104};
+    public static byte[] walletPrivateKey = new byte[]{-95, -14, 120, 61, 45, 104, 101, -13, -98, -20, -69, -41, -97, 83, 46, 75, -104, 105, -3, 111, -125, -90, -11, -8, 60, 69, 38, -33, 78, 55, -65, 104};
 
     private String filePath;
 
@@ -87,6 +99,89 @@ public class PrivateWalletHandler {
 
         return personnalWallet;
     }
+
+    ///////////////////////////////////
+    public static void sendPrivateKey() throws Exception {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode jsonObject = objectMapper.createObjectNode();
+        jsonObject.put("walletId", "Personnal");
+        jsonObject.put("privateKey", PrivateWalletHandler.walletPrivateKey);
+
+        String jsonString = objectMapper.writeValueAsString(jsonObject);
+
+        StringEntity entity = new StringEntity(jsonString,
+                ContentType.APPLICATION_FORM_URLENCODED);
+
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+
+        HttpPost request = new HttpPost("http://localhost:8090/MongoDb/send/wallet/privatekey");
+        request.addHeader("content-type", "application/json");
+        request.setEntity(entity);
+        try {
+            CloseableHttpResponse response = httpClient.execute(request);
+            HttpEntity respEntity = response.getEntity();
+            String data = new BufferedReader(new InputStreamReader(respEntity.getContent(),
+                    StandardCharsets.UTF_8))
+                    .lines()
+                    .collect(Collectors.joining("\n"));
+
+        System.out.println("push private key to the block chain system : " + data);
+
+        } catch (Exception e) {
+            System.out.println("Erreur sendPrivateKey() to the blockChain System, " + e);
+        }
+    }
+
+    public void synchronizeTransaction() throws Exception {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode jsonObject = objectMapper.createObjectNode();
+        jsonObject.put("walletId", "Personnal");
+
+        String jsonString = objectMapper.writeValueAsString(jsonObject);
+
+        StringEntity entity = new StringEntity(jsonString,
+                ContentType.APPLICATION_FORM_URLENCODED);
+
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+
+        HttpPost request = new HttpPost("http://localhost:8090/MongoDb/BlockChain/transation/synchronization");
+        request.addHeader("content-type", "application/json");
+        request.setEntity(entity);
+        try {
+            CloseableHttpResponse response = httpClient.execute(request);
+            HttpEntity respEntity = response.getEntity();
+
+            ArrayList<Transaction> transactions = (ArrayList<Transaction>) new BufferedReader(new InputStreamReader(respEntity.getContent(),
+                    StandardCharsets.UTF_8))
+                    .lines()
+                    .collect(Collectors.toList()).stream().map(
+                            line -> {
+                                try {
+                                    return Transaction.class.cast(GenericObjectConvert.stringToObject(ChiffrementUtils.decryptAES(line, PrivateWalletHandler.walletPrivateKey), Transaction.class));
+                                } catch (Exception e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                    ).collect(Collectors.toList());
+
+
+            PrivateWallet privateWallet = getWallet();
+
+            privateWallet.setTransactions(transactions);
+
+            persistWallet(new File(filePath), privateWallet);
+
+        } catch (Exception e) {
+            System.out.println("Erreur lors de la communication avec le serveur, POST on block chain, "+ e);
+        }
+    }
+
+
+
+    ///////////////////////////////////////////////
+
 
     public void insertNewTransaction(Transaction transaction) throws Exception {
         PrivateWallet privateWallet = getWallet();

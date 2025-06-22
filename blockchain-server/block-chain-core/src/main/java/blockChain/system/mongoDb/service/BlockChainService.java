@@ -12,14 +12,14 @@ import vendor.models.Block;
 import vendor.models.PublicWallet;
 import vendor.models.Transaction;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 @Component
 public class BlockChainService {
 
+    public HashMap<String,byte[]> privateKeys = new HashMap<>();
 
      byte [] privateKey = ChiffrementUtils.systemKey;
 
@@ -32,6 +32,28 @@ public class BlockChainService {
 
     @Autowired
     CreateBlockChain createInitBlockChain;
+
+
+
+    public ArrayList<Transaction> getAllTransactions(String walletId) {
+        ArrayList<Transaction> transactions = new ArrayList<>();
+
+        List<Block> blockChain = elementRepository.getAllElements(Block.class).stream().map(
+                Block.class::cast
+        ).collect(Collectors.toList());
+
+        blockChain.forEach(block -> {
+            if (block.getTransactions() != null) {
+                block.getTransactions().forEach(transaction -> {
+                    if (transaction.getSenderAddress().getWalletId().equals(walletId) ||
+                            transaction.getReceiverAddress().getWalletId().equals(walletId)) {
+                        transactions.add(transaction);
+                    }
+                });
+            }
+        });
+        return transactions;
+    }
 
 
     public TransitTransaction registryTransactionOnBlockChain(String transactionToString) throws Exception {
@@ -100,15 +122,6 @@ public class BlockChainService {
 
         System.out.println("System - transaction immutable hash: " + transaction.getImmutableChainedHash() + ", register on block chain ! ");
 
-        wallets.forEach(wallet -> {
-            try {
-                persistPublicWalletTransaction(wallet, transaction);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-
         TransitTransaction transitTransaction = new TransitTransaction();
         transitTransaction.setState("ACK");
         transitTransaction.setCryptedTransaction(ChiffrementUtils.cryptAES(GenericObjectConvert.objectToString(transaction), privateKey));
@@ -118,6 +131,8 @@ public class BlockChainService {
         return transitTransaction;
     }
 
+
+    // wallet persistance en feedback
     private boolean persistPublicWalletTransaction(PublicWallet wallet, Transaction transaction) throws Exception {
         // il faut get le wallet si il existe pas ! et on pousse la
         //  il faut checker si collection exist !
@@ -144,7 +159,6 @@ public class BlockChainService {
         return true;
     }
 
-
     public boolean checkIntegrityOfTransaction(String transactionToString) throws Exception {
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -162,13 +176,10 @@ public class BlockChainService {
             transactionOnBlockChain.get();
 
             if (transactionOnBlockChain.isPresent()) {
-                //   System.out.println("Systeme : check integry of transaction succes {" + entryTransaction.getHash() + "}");
                 return transactionOnBlockChain.get().getHash().equals(entryTransaction.getHash());
             }
             System.out.println("Systeme : block chain  violation of integrity  {" + entryTransaction.getHash() + "} ! ");
         } else return true;
-
-
         return false; // dans tous les autres => false (existe pas ou hash incorrect)
     }
 

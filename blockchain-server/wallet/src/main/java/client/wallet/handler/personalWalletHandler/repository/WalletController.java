@@ -15,8 +15,10 @@ import java.io.IOException;
 public class WalletController {
 
     @GetMapping("/getDefaultWallet")
-    public Object getDefaultWallet() throws Exception {
+    public Object getDefaultWallet() {
         PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler();
+       // privateWalletHandler.synchronizeTransaction();
+    // code pour synchroniser les transactions du wallet depuis la block chain
         return ResponseEntity.ok(privateWalletHandler.getWallet());
     }
 

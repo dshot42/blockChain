@@ -1,10 +1,11 @@
-package blockChain.transaction.consensus.webSocket;
+package blockChain.system.mongoDb.webSocket;
 
 
 import blockChain.chiffrement.ChiffrementUtils;
 
 
 import blockChain.nodeThreads.utils.TransactionUtils;
+import blockChain.system.mongoDb.service.BlockChainService;
 import blockChain.transaction.consensus.ConsensusUtils;
 
 import blockChain.transaction.seller.AckAndReceiveTransactionProcess;
@@ -28,9 +29,9 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class ThreadPoolHandler implements Runnable {
+public class MongoWebConsensusListener implements Runnable {
     @Autowired
-    AckAndReceiveTransactionProcess ackAndReceiveTransactionProcess;
+    BlockChainService blockChainService;
 
     @Autowired
     TransactionUtils nodeUtils;
@@ -88,7 +89,11 @@ public class ThreadPoolHandler implements Runnable {
             boolean isValidated = checkConsensusValidity(transaction, consensusReceipeHash.get(transaction2string));
             if (isValidated) {
                 System.out.println("Consensus System : validation de la transaction par le consensus ! ");
-                sendTransitTransactionToConsensusMember(containerToEmit, ChiffrementUtils.cryptAES(GenericObjectConvert.objectToString(transaction)));
+                if (containerToEmit != null) {
+                    blockChainService.registryTransactionOnBlockChain(containerToEmit.getCryptedTransaction());
+                      nodeUtils.socketEmitToNextThread(containerToEmit.getReceiverAddress().getAddress(), GenericObjectConvert.objectToString(containerToEmit));
+                }
+                consensusReceipeHash.remove(transaction2string);
             } else {
                 System.out.println("Consensus System : l'integrite de la transaction n'a pas ete valide par les membre du consensus ! ");
             }
@@ -97,25 +102,13 @@ public class ThreadPoolHandler implements Runnable {
 
 
     private void sendTransitTransactionToConsensusMember(TransitTransaction transitTransaction, String transaction2string) throws Exception {
-         ackAndReceiveTransactionProcess.sendTransactionOnBlockChain( transaction2string);
         if (transitTransaction != null) {
-            // send feedback
+           blockChainService.registryTransactionOnBlockChain(transitTransaction.getCryptedTransaction());
             nodeUtils.socketEmitToNextThread(transitTransaction.getReceiverAddress().getAddress(), GenericObjectConvert.objectToString(transitTransaction));
-       // // FIXME: 21/06/2025
         }
         consensusReceipeHash.remove(transaction2string);
     }
 
-    /*
-    private void sendReceipeToActorOfTransation(TransitTransaction cryptedTransaction, String transaction2string) throws Exception {
-        TransitTransaction cryptedToEmitTransaction = blockChainService.registryTransactionOnBlockChain(cryptedTransaction.getCryptedTransaction());
-        if (cryptedToEmitTransaction != null) {
-            // send feedback
-            nodeUtils.socketEmitToNextThread(cryptedToEmitTransaction.getReceiverAddress().getAddress(), GenericObjectConvert.objectToString(cryptedToEmitTransaction));
-            nodeUtils.socketEmitToNextThread(cryptedToEmitTransaction.getSenderAddress().getAddress(), GenericObjectConvert.objectToString(cryptedToEmitTransaction));
-        }
-        consensusReceipeHash.remove(transaction2string);
-    } */
 
     public boolean checkConsensusValidity(Transaction transaction, List<String> listHash) {
         boolean integrity = true;

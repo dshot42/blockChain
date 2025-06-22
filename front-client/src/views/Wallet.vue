@@ -32,8 +32,8 @@ onMounted(() => {
           >
             <div>
               <div>ID: {{ transaction.id }}</div>
-              <div>From: {{ transaction.senderAddress.address }}</div>
-              <div>To: {{ transaction.receiverAddress.address }}</div>
+              <div>From: {{ transaction.senderAddress.walletId }}</div>
+              <div>To: {{ transaction.receiverAddress.walletId }}</div>
               <div>Amount: {{ transaction.amount }}</div>
               <div>Timestamp: {{ transaction.dateTime }}</div>
             </div>

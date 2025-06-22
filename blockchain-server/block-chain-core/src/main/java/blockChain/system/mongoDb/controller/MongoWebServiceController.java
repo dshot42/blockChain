@@ -1,6 +1,7 @@
 package blockChain.system.mongoDb.controller;
 
 
+import blockChain.chiffrement.ChiffrementUtils;
 import blockChain.system.mongoDb.repository.ElementRepository;
 import blockChain.system.mongoDb.service.BlockChainService;
 import blockChain.system.mongoDb.service.SequenceGeneratorService;
@@ -13,9 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vendor.models.PublicWallet;
+import vendor.models.Transaction;
 import vendor.models.TransitTransaction;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/MongoDb")
@@ -29,9 +34,16 @@ public class MongoWebServiceController {
     @Autowired
     BlockChainService blockChainService;
 
-
-
-
+    @PostMapping("/send/wallet/privatekey")
+    public ResponseEntity<Object> setPrivateKey( @Valid @RequestBody String datas) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(datas);
+        String walletId = jsonNode.get("walletId").asText();
+        String privateKey = jsonNode.get("privateKey").asText();
+        // set in static map //
+        blockChainService.privateKeys.put(walletId, privateKey.getBytes());
+        return ResponseEntity.ok("Serveur Received private key.");
+    }
 
 
     @GetMapping("/{element}/{field}/{value}/{filter}")
@@ -91,6 +103,31 @@ public class MongoWebServiceController {
             TransitTransaction tt = blockChainService.registryTransactionOnBlockChain(datas);
             System.out.println("\"/BlockChain/transaction\" Transaction successfully registered on the blockchain !  " );
             return ResponseEntity.ok(tt);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Error during transaction processing: " + e.getMessage());
+        }
+
+    }
+
+
+    @PostMapping("/BlockChain/transation/synchronization")
+    public ResponseEntity<Object> getAllTransaction(@Valid @RequestBody String datas) {
+        try {
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(datas);
+            String walletId = jsonNode.get("walletId").asText();
+
+            List<String> cryptedTransactions = blockChainService.getAllTransactions(datas).stream().map(t -> {
+                try {
+                    return  ChiffrementUtils.cryptAES(objectMapper.writeValueAsString(t),blockChainService.privateKeys.get(walletId));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }).collect(Collectors.toList());
+
+            return ResponseEntity.ok(cryptedTransactions);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body("Error during transaction processing: " + e.getMessage());

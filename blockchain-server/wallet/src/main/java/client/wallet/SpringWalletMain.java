@@ -34,6 +34,9 @@ public class SpringWalletMain{
     public static void main(String[] args) throws Exception {
         System.out.println("Starting Wallet Application...");
         SpringApplication.run(SpringWalletMain.class, args);
+
+        System.out.println("Send PrivateKey to Block chain System");
+        PrivateWalletHandler.sendPrivateKey();
         System.out.println("Check wallet : ");
         checkWallet();
         System.out.println("Wallet is ready, launching transaction");
@@ -43,6 +46,7 @@ public class SpringWalletMain{
     // todo isoler code
     private static void checkWallet() throws Exception {
         PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler();
+
         privateWalletHandler.testWallet();
     }
 
