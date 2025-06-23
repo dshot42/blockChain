@@ -1,4 +1,4 @@
-package client.wallet.handler.personalWalletHandler;
+package vendor.transaction.service;
 
 
 import vendor.models.PublicWallet;

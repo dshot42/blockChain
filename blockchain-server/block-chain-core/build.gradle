@@ -22,7 +22,7 @@ dependencies {
 
 	implementation project(path: ':vendor-bundle')
 	implementation project(path: ':wallet')
-	 implementation project(path: ':consensus-middle-ware')
+ 	implementation project(path: ':consensus-middle-ware')
 	implementation project(path: ':chiffrement-utils')
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'

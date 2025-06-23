@@ -44,7 +44,7 @@ import org.springframework.context.annotation.Configuration;
             System .out.println("Consensus System socket listener is instantiated and currently running");
             SpringApplication.run(ConsensusSpringApplication.class, args);
 
-             initTransactionController(); // pour test
+            initTransactionController();
         }
 
 
@@ -55,6 +55,8 @@ import org.springframework.context.annotation.Configuration;
                 Thread.sleep(1000);
 
                 Thread tAsk = new Thread(askTransactionController); // seller
+
+
                 tAsk.start();
             } catch (Exception e) {
                 e.printStackTrace();

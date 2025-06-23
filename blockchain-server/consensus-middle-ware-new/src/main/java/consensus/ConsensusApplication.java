@@ -1,6 +1,7 @@
 package consensus;
 
 import consensus.service.ActorPoolHandler;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @SpringBootApplication
 public class ConsensusApplication {
-    ActorPoolHandler actorPoolHandler;
+    static ActorPoolHandler actorPoolHandler;
 
     @Autowired
     public ConsensusApplication(ActorPoolHandler actorPoolHandler) {
@@ -37,7 +38,7 @@ public class ConsensusApplication {
     public static void main(String[] args) {
         SpringApplication.run(ConsensusApplication.class, args);
         System .out.println("Consensus System socket listener is instantiated and currently running");
-
+        actorPoolHandler.start();
 
     }
 

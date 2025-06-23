@@ -75,7 +75,23 @@ public class ChiffrementUtils {
             return Base64.getEncoder()
                     .encodeToString(cipherText);
         } catch (Exception e) {
-            System.out.println("error generate AES cipher");
+            System.out.println("error generate AES cipher"+ e);
+            throw new Exception(e);
+        }
+    }
+
+    public static String cryptAES(String datas,byte[] key) throws Exception {
+
+        SecretKey secretKey = new SecretKeySpec(key, 0, key.length, "AES");
+        try {
+            // openssl enc -aes-256-cbc -k secret -P -md sha1
+            Cipher cipher = Cipher.getInstance(algorithm);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec);
+            byte[] cipherText = cipher.doFinal(datas.getBytes());
+            return Base64.getEncoder()
+                    .encodeToString(cipherText);
+        } catch (Exception e) {
+            System.out.println("error generate AES cipher with key "+ key +" , error : " +e);
             throw new Exception(e);
         }
     }
@@ -100,21 +116,7 @@ public class ChiffrementUtils {
     }
 
 
-    public static String cryptAES(String datas,byte[] key) throws Exception {
 
-        SecretKey secretKey = new SecretKeySpec(key, 0, key.length, "AES");
-        try {
-            // openssl enc -aes-256-cbc -k secret -P -md sha1
-            Cipher cipher = Cipher.getInstance(algorithm);
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec);
-            byte[] cipherText = cipher.doFinal(datas.getBytes());
-            return Base64.getEncoder()
-                    .encodeToString(cipherText);
-        } catch (Exception e) {
-            System.out.println("error generate AES cipher");
-            throw new Exception(e);
-        }
-    }
 
     public static String decryptAES(String datas,byte[] key) throws Exception{
         SecretKey secretKey = new SecretKeySpec(key, 0, key.length, "AES");

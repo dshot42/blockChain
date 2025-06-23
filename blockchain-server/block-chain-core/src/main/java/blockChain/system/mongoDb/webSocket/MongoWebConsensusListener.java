@@ -88,10 +88,12 @@ public class MongoWebConsensusListener implements Runnable {
         if (consensusReceipeHash.get(transaction2string).size() == ConsensusUtils.numberConsensusMember) {
             boolean isValidated = checkConsensusValidity(transaction, consensusReceipeHash.get(transaction2string));
             if (isValidated) {
-                System.out.println("Consensus System : validation de la transaction par le consensus ! ");
+                System.out.println("Consensus System : Validation of Transation riceived by consensus core ! ");
                 if (containerToEmit != null) {
                     blockChainService.registryTransactionOnBlockChain(containerToEmit.getCryptedTransaction());
-                      nodeUtils.socketEmitToNextThread(containerToEmit.getReceiverAddress().getAddress(), GenericObjectConvert.objectToString(containerToEmit));
+                     // send transaction to receiver of the transaction
+                    // inutile il aura simplement a synchroniser son wallet depis la blockchain
+                      // nodeUtils.socketEmitToNextThread(containerToEmit.getReceiverAddress().getAddress(), GenericObjectConvert.objectToString(containerToEmit));
                 }
                 consensusReceipeHash.remove(transaction2string);
             } else {

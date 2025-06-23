@@ -1,8 +1,6 @@
 package client.wallet.handler.personalWalletHandler.repository;
 
-import client.wallet.handler.personalWalletHandler.InitTransactionDetails;
-
-import client.wallet.handler.personalWalletHandler.PrivateWalletHandler;
+import vendor.transaction.service.PrivateWalletHandler;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,13 +13,21 @@ import java.io.IOException;
 public class WalletController {
 
     @GetMapping("/getDefaultWallet")
-    public Object getDefaultWallet() {
+    public Object getDefaultWallet() throws Exception {
         PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler();
-       // privateWalletHandler.synchronizeTransaction();
-    // code pour synchroniser les transactions du wallet depuis la block chain
+        privateWalletHandler.synchronizeTransaction();
         return ResponseEntity.ok(privateWalletHandler.getWallet());
     }
 
+    @GetMapping("/transaction/validation") // receive feedback from server after push transaction on block chain
+    public Object validationTransaction() throws Exception {
+
+        PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler();
+        privateWalletHandler.synchronizeTransaction();
+        privateWalletHandler.emitTransactionToSocketClient();
+        System.out.println("get transactionValidation from server, emit to Node socket client 3000");
+        return ResponseEntity.ok("update wallet done ");
+    }
 
     @GetMapping("/clear")
     public Object clearWallet() {

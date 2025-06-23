@@ -3,6 +3,9 @@ package blockChain.system.mongoDb.service;
 import blockChain.chiffrement.ChiffrementUtils;
 
 import blockChain.system.mongoDb.repository.ElementRepository;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import vendor.models.TransitTransaction;
 import vendor.utils.GenericObjectConvert;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +19,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-@Component
+@Service
 public class BlockChainService {
 
     public HashMap<String,byte[]> privateKeys = new HashMap<>();
@@ -35,15 +38,15 @@ public class BlockChainService {
 
 
 
-    public ArrayList<Transaction> getAllTransactions(String walletId) {
-        ArrayList<Transaction> transactions = new ArrayList<>();
+    public List<Transaction> getAllTransactions(String walletId) {
 
+        /*
         List<Block> blockChain = elementRepository.getAllElements(Block.class).stream().map(
                 Block.class::cast
         ).collect(Collectors.toList());
 
         blockChain.forEach(block -> {
-            if (block.getTransactions() != null) {
+            if (block.getTransactions().size() != 0) {
                 block.getTransactions().forEach(transaction -> {
                     if (transaction.getSenderAddress().getWalletId().equals(walletId) ||
                             transaction.getReceiverAddress().getWalletId().equals(walletId)) {
@@ -51,8 +54,14 @@ public class BlockChainService {
                     }
                 });
             }
-        });
-        return transactions;
+        }); */
+        List<Object> blockChainPublicWalletObj = elementRepository.getElementBy(PublicWallet.class, "walletId", walletId);
+
+        if (blockChainPublicWalletObj.size() == 0) {
+            return null;// pas de transaction pour ce wallet
+        }
+        PublicWallet blockChainPublicWallet = PublicWallet.class.cast(blockChainPublicWalletObj.get(0));
+        return  blockChainPublicWallet.getTransactions();
     }
 
 
@@ -98,7 +107,7 @@ public class BlockChainService {
 
         Block blockChain = Block.class.cast(elementRepository.getElementById(Block.class, elementRepository.count(Block.class)));
         List<Transaction> listTransacOfTheBlock = new LinkedList<>();
-        if (blockChain.getTransactions().size() % 100 == 0) { // 100 transaction = nouveau block
+        if ( blockChain.getTransactions().size() % 100 == 0) { // 100 transaction = nouveau block
             blockChain = createInitBlockChain.createNewBlock();
             transaction.setImmutableChainedHash(ChiffrementUtils.generateHashKey(GenericObjectConvert.objectToString(transaction)));
 
@@ -120,12 +129,21 @@ public class BlockChainService {
 
         elementRepository.updateOrInsert(Block.class, blockChain);
 
+
+        wallets.forEach(wallet -> {
+            try {
+                persistPublicWalletTransaction(wallet, transaction);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        this.SendFeedBackToSenderWallet();
         System.out.println("System - transaction immutable hash: " + transaction.getImmutableChainedHash() + ", register on block chain ! ");
 
         TransitTransaction transitTransaction = new TransitTransaction();
         transitTransaction.setState("ACK");
         transitTransaction.setCryptedTransaction(ChiffrementUtils.cryptAES(GenericObjectConvert.objectToString(transaction), privateKey));
-       System.out.println("System - sender address : " + transaction.getSenderAddress().getAddress());
         transitTransaction.setSenderAddress(transaction.getSenderAddress());
         transitTransaction.setReceiverAddress(transaction.getReceiverAddress());
         return transitTransaction;
@@ -174,13 +192,22 @@ public class BlockChainService {
             Optional<Transaction> transactionOnBlockChain = block.getTransactions()
                     .stream().filter(t -> t.getImmutableChainedHash().equals(entryTransaction.getImmutableChainedHash())).findAny();
             transactionOnBlockChain.get();
+            return transactionOnBlockChain.get().getHash().equals(entryTransaction.getHash());
+        }
+        return true; // no transaction on blockchain
+    }
 
-            if (transactionOnBlockChain.isPresent()) {
-                return transactionOnBlockChain.get().getHash().equals(entryTransaction.getHash());
-            }
-            System.out.println("Systeme : block chain  violation of integrity  {" + entryTransaction.getHash() + "} ! ");
-        } else return true;
-        return false; // dans tous les autres => false (existe pas ou hash incorrect)
+
+    public void SendFeedBackToSenderWallet() {
+
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "http://localhost:8091/api/wallet/transaction/validation";
+        // Replace with your endpoint and query parameters
+
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+
+        System.out.println("Response: " + response.getBody());
+
     }
 
 }

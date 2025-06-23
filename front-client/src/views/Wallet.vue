@@ -44,6 +44,7 @@ onMounted(() => {
     </div>
 
     <div class="emit-transaction">
+      <div>Send Transaction to another wallet</div>
       <div>
         <label for="toAddress">To Address:</label>
         <input id="toAddress" v-model="walletStore.transacPackage.to" required />
@@ -53,12 +54,27 @@ onMounted(() => {
         <input
           id="amount"
           type="number"
-          v-model="walletStore.transacPackage.amount"
+          v-model="walletStore.transacPackage.amountSended"
           min="1"
           required
         />
       </div>
-      <button @click="walletStore.sendTransaction()">Envoyer</button>
+      <button @click="walletStore.sendTransaction(true)">Envoyer</button>
+    </div>
+
+    <div class="emit-transaction">
+      <div>Credit wallet from crypto provider</div>
+      <div>
+        <label for="amount">Amount:</label>
+        <input
+          id="amount"
+          type="number"
+          v-model="walletStore.transacPackage.amountReceived"
+          min="1"
+          required
+        />
+      </div>
+      <button @click="walletStore.sendTransaction(false)">Envoyer</button>
     </div>
   </body>
 </template>

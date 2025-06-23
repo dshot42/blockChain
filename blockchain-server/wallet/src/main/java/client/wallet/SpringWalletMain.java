@@ -2,8 +2,7 @@ package client.wallet;
 
 
 
-import client.wallet.handler.personalWalletHandler.InitTransactionDetails;
-import client.wallet.handler.personalWalletHandler.PrivateWalletHandler;
+import vendor.transaction.service.PrivateWalletHandler;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Configuration;
@@ -34,20 +33,23 @@ public class SpringWalletMain{
     public static void main(String[] args) throws Exception {
         System.out.println("Starting Wallet Application...");
         SpringApplication.run(SpringWalletMain.class, args);
-
-        System.out.println("Send PrivateKey to Block chain System");
-        PrivateWalletHandler.sendPrivateKey();
+        Thread.sleep((long) 15000 ); // wait for the system to start
         System.out.println("Check wallet : ");
         checkWallet();
         System.out.println("Wallet is ready, launching transaction");
+
+
+        System.out.println("Send PrivateKey to Block chain System");
+        PrivateWalletHandler.sendPrivateKey();
+
     }
 
 
-    // todo isoler code
     private static void checkWallet() throws Exception {
         PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler();
-
+      //  privateWalletHandler.synchronizeTransaction();
         privateWalletHandler.testWallet();
+
     }
 
 

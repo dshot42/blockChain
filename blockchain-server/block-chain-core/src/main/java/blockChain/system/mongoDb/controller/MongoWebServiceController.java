@@ -19,9 +19,13 @@ import vendor.models.TransitTransaction;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/MongoDb")
 public class MongoWebServiceController {
@@ -35,7 +39,7 @@ public class MongoWebServiceController {
     BlockChainService blockChainService;
 
     @PostMapping("/send/wallet/privatekey")
-    public ResponseEntity<Object> setPrivateKey( @Valid @RequestBody String datas) throws Exception {
+    public ResponseEntity<Object> setPrivateKey(@Valid @RequestBody String datas) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(datas);
         String walletId = jsonNode.get("walletId").asText();
@@ -86,6 +90,7 @@ public class MongoWebServiceController {
         return ResponseEntity.ok(elementService.deleteElement(this.getClassForName(element), elementId));
     }
 
+
     private static Class<?> getClassForName(String element) throws ClassNotFoundException {
         return Class.forName(element);
     }
@@ -100,9 +105,9 @@ public class MongoWebServiceController {
     @PostMapping("/BlockChain/transaction")
     public ResponseEntity<Object> createOrUpdateBlockChain(@Valid @RequestBody String datas) throws Exception {
         try {
-            TransitTransaction tt = blockChainService.registryTransactionOnBlockChain(datas);
-            System.out.println("\"/BlockChain/transaction\" Transaction successfully registered on the blockchain !  " );
-            return ResponseEntity.ok(tt);
+            blockChainService.registryTransactionOnBlockChain(datas);
+            System.out.println("\"/BlockChain/transaction\" Transaction successfully registered on the blockchain !  ");
+            return ResponseEntity.ok("update blockChain");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body("Error during transaction processing: " + e.getMessage());
@@ -111,26 +116,32 @@ public class MongoWebServiceController {
     }
 
 
-    @PostMapping("/BlockChain/transation/synchronization")
-    public ResponseEntity<Object> getAllTransaction(@Valid @RequestBody String datas) {
+   @PostMapping("/BlockChain/transation/synchronization")
+    public ResponseEntity<List> getAllTransaction(@Valid @RequestBody String data) {
         try {
-
             ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(datas);
+            JsonNode jsonNode = objectMapper.readTree(data);
             String walletId = jsonNode.get("walletId").asText();
+            List<Transaction> transactions = blockChainService.getAllTransactions(walletId);
+            if (transactions == null) {
+                throw new Exception("No transactions found for the given wallet ID: " +walletId);
+            }
 
-            List<String> cryptedTransactions = blockChainService.getAllTransactions(datas).stream().map(t -> {
+            List<String> cryptedTransactions = transactions.stream().map(t -> {
                 try {
-                    return  ChiffrementUtils.cryptAES(objectMapper.writeValueAsString(t),blockChainService.privateKeys.get(walletId));
+                    return ChiffrementUtils.cryptAES(objectMapper.writeValueAsString(t), ChiffrementUtils.systemKey);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }).collect(Collectors.toList());
 
+            System.out.println("\"/BlockChain/transation/synchronization\" Synchronization of transactions from the blockchain, " + cryptedTransactions.size() + " transactions found.  ");
+
+
             return ResponseEntity.ok(cryptedTransactions);
+
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body("Error during transaction processing: " + e.getMessage());
+            return ResponseEntity.badRequest().body(Collections.singletonList("Error during transaction processing: " + e.getMessage()));
         }
 
     }
@@ -138,8 +149,8 @@ public class MongoWebServiceController {
     ///////////////////// specificWallet /////////////////// a mettre ailleurs !
 
     @GetMapping("cryptedWallet/wallet/PublicWallet/{field}/{value}")
-    public ResponseEntity<Object> getAllElements( @PathVariable(value = "field") String field,
-                                 @PathVariable(value = "value") String value) throws Exception {
+    public ResponseEntity<Object> getAllElements(@PathVariable(value = "field") String field,
+                                                 @PathVariable(value = "value") String value) throws Exception {
         if (elementService.getElementBy(PublicWallet.class, field, value).size() != 0)
             return ResponseEntity.ok(elementService.getElementBy(PublicWallet.class, field, value).get(0));
         else

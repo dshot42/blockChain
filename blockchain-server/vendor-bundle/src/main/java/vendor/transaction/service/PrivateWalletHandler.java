@@ -1,4 +1,4 @@
-package client.wallet.handler.personalWalletHandler;
+package vendor.transaction.service;
 
 import blockChain.chiffrement.ChiffrementUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,13 +10,14 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
-import org.springframework.stereotype.Component;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.client.RestTemplate;
 import vendor.models.PrivateWallet;
 import vendor.models.PublicWallet;
 import vendor.models.Transaction;
-import vendor.models.TransitTransaction;
 import vendor.utils.GenericObjectConvert;
 
 import java.io.*;
@@ -24,10 +25,7 @@ import java.net.Socket;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -44,7 +42,7 @@ public class PrivateWalletHandler {
 
     private String filePath;
 
-     private static final String ROOTPROJECT = Paths.get("").toAbsolutePath().getParent().toString();
+    private static final String ROOTPROJECT = Paths.get("").toAbsolutePath().getParent().toString();
 
     public PrivateWalletHandler() {
         this.walletId = "Personnal";
@@ -74,7 +72,7 @@ public class PrivateWalletHandler {
         File file = new File(filePath);
         if (!file.exists()) {
             try {
-             System.out.println("Creating NEW WALLET ");
+                System.out.println("Creating NEW WALLET ");
                 file.createNewFile();
             } catch (IOException e) {
                 System.out.println("Failed to create wallet file: " + e.getMessage());
@@ -95,7 +93,7 @@ public class PrivateWalletHandler {
         } catch (Exception e) {
             throw new RuntimeException("Fail to persist Wallet , " + e);
         }
-        System.out.println("[SUCCES] Wallet  : "+ personnalWallet.walletId);
+        System.out.println("[SUCCES] Wallet  : " + personnalWallet.walletId);
 
         return personnalWallet;
     }
@@ -126,14 +124,67 @@ public class PrivateWalletHandler {
                     .lines()
                     .collect(Collectors.joining("\n"));
 
-        System.out.println("push private key to the block chain system : " + data);
+            System.out.println("push private key to the block chain system : " + data);
 
         } catch (Exception e) {
             System.out.println("Erreur sendPrivateKey() to the blockChain System, " + e);
         }
     }
 
-    public void synchronizeTransaction() throws Exception {
+    public void synchronizeTransaction()  {
+        try {
+            System.out.println("synchronizeTransaction() : Synchronization of transactions from the block chain system");
+            String url = "http://localhost:8090/MongoDb/BlockChain/transation/synchronization";
+
+            // Set headers
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            // Set body parameters
+            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectNode jsonObject = objectMapper.createObjectNode();
+            jsonObject.put("walletId", "Personnal");
+
+            String jsonString = objectMapper.writeValueAsString(jsonObject);
+            // Send POST request
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<List> response = restTemplate.postForEntity(url, jsonString, List.class);
+
+            try {
+                // Print response
+                List<String> responseData = (List<String>) response.getBody();
+                System.out.println("synchronizeTransaction() : " + responseData.size() + " transactions received from the block chain system");
+
+
+                ArrayList<Transaction> transactions = (ArrayList<Transaction>) responseData
+                        .stream()
+                        .map((String line) -> {
+                                    try {
+                                        return Transaction.class.cast(GenericObjectConvert.stringToObject(ChiffrementUtils.decryptAES(line, PrivateWalletHandler.walletPrivateKey), Transaction.class));
+                                    } catch (Exception e) {
+                                        throw new RuntimeException("Error cast crypted Transaction when synchronsation ", e);
+                                    }
+                                }
+                        ).collect(Collectors.toList());
+
+                PrivateWallet privateWallet = getWallet();
+                privateWallet.setTransactions(transactions);
+                persistWallet(new File(filePath), privateWallet);
+            } catch (Exception e) {
+                System.out.println("Erreur lors de la communication avec le serveur, POST on block chain, " + e);
+            }
+        } catch (Exception e) {
+            System.out.println("Erreur lors de la synchronisation des transactions, " + e);
+        }
+
+
+        // Print response
+
+    }
+
+
+    public void synchronizeTransactionOld() throws Exception {
+
 
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode jsonObject = objectMapper.createObjectNode();
@@ -153,31 +204,33 @@ public class PrivateWalletHandler {
             CloseableHttpResponse response = httpClient.execute(request);
             HttpEntity respEntity = response.getEntity();
 
-            ArrayList<Transaction> transactions = (ArrayList<Transaction>) new BufferedReader(new InputStreamReader(respEntity.getContent(),
+            List<String> data = new BufferedReader(new InputStreamReader(respEntity.getContent(),
                     StandardCharsets.UTF_8))
                     .lines()
-                    .collect(Collectors.toList()).stream().map(
-                            line -> {
+                    .collect(Collectors.toList());
+
+            System.out.println("List ok " + data.size() + " transactions received from the block chain system");
+
+            ArrayList<Transaction> transactions = (ArrayList<Transaction>) data
+                    .stream()
+                    .map((String line) -> {
                                 try {
                                     return Transaction.class.cast(GenericObjectConvert.stringToObject(ChiffrementUtils.decryptAES(line, PrivateWalletHandler.walletPrivateKey), Transaction.class));
                                 } catch (Exception e) {
-                                    throw new RuntimeException(e);
+                                    throw new RuntimeException("Error cast crypted Transaction when synchronsation ", e);
                                 }
                             }
                     ).collect(Collectors.toList());
 
-
+            System.out.println("synchronizeTransaction() : " + transactions.size() + " transactions received from the block chain system");
             PrivateWallet privateWallet = getWallet();
-
             privateWallet.setTransactions(transactions);
-
             persistWallet(new File(filePath), privateWallet);
 
         } catch (Exception e) {
-            System.out.println("Erreur lors de la communication avec le serveur, POST on block chain, "+ e);
+            System.out.println("Erreur lors de la communication avec le serveur, POST on block chain, " + e);
         }
     }
-
 
 
     ///////////////////////////////////////////////
@@ -245,6 +298,17 @@ public class PrivateWalletHandler {
         socket.setSendBufferSize((int) 1e7); // // 100Mo buffer
         OutputStream output = socket.getOutputStream();
         byte[] data = GenericObjectConvert.objectToString(transaction).getBytes();
+
+        output.write(data);
+        output.flush(); // flush the output stream
+    }
+
+    public void emitTransactionToSocketClient() throws Exception {
+        // webSocketClient
+        Socket socket = new Socket("127.0.0.1", 3000); //TCP Socket to my client node
+        socket.setSendBufferSize((int) 1000);
+        OutputStream output = socket.getOutputStream();
+        byte[] data = GenericObjectConvert.objectToString("update transaction").getBytes();
 
         output.write(data);
         output.flush(); // flush the output stream

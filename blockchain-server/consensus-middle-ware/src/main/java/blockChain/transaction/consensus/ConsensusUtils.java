@@ -25,6 +25,7 @@ public class ConsensusUtils {
         output.write(data);
         PrintWriter writer = new PrintWriter(output, true);
         writer.println();
+        System.out.println("Transaction sent to the block chain system with success");
     }
 
 

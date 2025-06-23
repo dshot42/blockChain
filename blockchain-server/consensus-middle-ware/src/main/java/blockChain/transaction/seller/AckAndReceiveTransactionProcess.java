@@ -4,10 +4,11 @@ import blockChain.chiffrement.ChiffrementUtils;
 
 import blockChain.nodeThreads.utils.TransactionUtils;
 import blockChain.transaction.consensus.ConsensusUtils;
-import client.wallet.handler.personalWalletHandler.InitTransactionDetails;
-import client.wallet.handler.personalWalletHandler.PrivateWalletHandler;
+
 import org.springframework.stereotype.Service;
 import vendor.models.TransitTransaction;
+import vendor.transaction.service.InitTransactionDetails;
+import vendor.transaction.service.PrivateWalletHandler;
 import vendor.utils.GenericObjectConvert;
 
 
@@ -32,7 +33,6 @@ import java.net.Socket;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -88,8 +88,7 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
         askTransaction.setDateTime(LocalDateTime.now().toString());
         askTransaction.setKey(TransactionUtils.transactionPrivateKey);
         askTransaction.setState("SYN");
-        Random random = new Random();
-        askTransaction.setAmount(random.nextInt(1000));
+        askTransaction.setAmount(InitTransactionDetails.transacAmount);
         bufferAcskTransaction = askTransaction;
         return askTransaction;
     }
@@ -112,12 +111,11 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
             ObjectMapper objectMapper = new ObjectMapper();
             Transaction transaction = objectMapper.readValue(transaction2string, Transaction.class);
             String thisHash = ChiffrementUtils.cryptAES(transaction2string, ChiffrementUtils.systemKey);
-
+            transaction.setHash(thisHash);
             if (bufferAcskTransaction.getAmount() == transaction.getAmount() &&
                     transaction.getSenderAddress().getWalletId().equals(bufferAcskTransaction.getReceiverAddress().getWalletId()) &&
                     transaction.getReceiverAddress().getWalletId().equals(bufferAcskTransaction.getSenderAddress().getWalletId())) {
-                //  transaction.setHash(ChiffrementUtils.cryptAES(thisHash)); // on devrait meme le faire du coté system
-                pushTransactionOnBlockChain(transaction);
+                  //  sendTransactionToBlockChain(transaction);
             } else {
                 System.out.println("les informations de transaction sont incorrects ! ");
             }
@@ -145,7 +143,7 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
                 String thisHash = nodeUtils.hashTransaction(cryptedTransaction.getCryptedTransaction());
                 System.out.println("SENDTRASACTION recive");
                 if (nodeUtils.checkValidation(cryptedTransaction.getCryptedTransactionHash(), thisHash)) {
-                    doTransaction(cryptedTransaction);
+                  //  doTransaction(cryptedTransaction);
                 } else
                     throw new Exception("Transaction validation failed, hash mismatch ! ");
             }
@@ -155,7 +153,7 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
     }
 
 
-    public void pushTransactionOnBlockChain(Transaction transaction) throws Exception {
+    public void sendTransactionToBlockChain(Transaction transaction) throws Exception {
 
         StringEntity entity = new StringEntity(ChiffrementUtils.cryptAES(GenericObjectConvert.objectToString(transaction)),
                 ContentType.APPLICATION_FORM_URLENCODED);
@@ -184,6 +182,7 @@ public class AckAndReceiveTransactionProcess implements Runnable { // processus 
 
 
     public void emitFeedBackBlockChainToSender(TransitTransaction cryptedTransaction) throws Exception {
+
         nodeUtils.persistTransactionOnWallet(cryptedTransaction, TransactionUtils.transactionPrivateKey, InitTransactionDetails.personnalWallet);
         nodeUtils.persistTransactionOnWallet(cryptedTransaction, TransactionUtils.transactionPrivateKey, InitTransactionDetails.remoteWallet);
 

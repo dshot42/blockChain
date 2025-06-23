@@ -1,29 +1,20 @@
 package consensus.service;
 
-import blockChain.chiffrement.ChiffrementUtils;
-import blockChain.nodeThreads.utils.TransactionUtils;
-import client.wallet.handler.personalWalletHandler.InitTransactionDetails;
-import client.wallet.handler.personalWalletHandler.PrivateWalletHandler;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import consensus.utils.TransactionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
-import vendor.models.Transaction;
 import vendor.models.TransitTransaction;
 import vendor.utils.GenericObjectConvert;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.time.LocalDateTime;
+
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,17 +22,19 @@ import java.util.concurrent.Executors;
 @Service
 public class ActorPoolHandler {
 
-    public String host ="127.0.0.1";
+
+    @Autowired
+    TransactionUtils transactionUtils;
+    public String host = "127.0.0.1";
     public int nbOfNode = 3; // nombre de membres du jury
     public int nbOfMembersPerNodes = 5; // consensus de 5 membres
 
     public Map<Integer, List<Integer>> memberPerNode = new HashMap<>();
-    List<Integer>  memberlreadyDefined = new LinkedList<>();
-    @Autowired
-    TransactionUtils transactionUtils;
+    List<Integer> memberlreadyDefined = new LinkedList<>();
+
     boolean isReady = false;
 
-    public ActorPoolHandler() {
+    public void start() {
         // code in the other thread, can reference "var" variable
         for (int j = 1; j <= nbOfNode; j++) {
             this.memberPerNode.put(j, new ArrayList<>());
@@ -68,17 +61,25 @@ public class ActorPoolHandler {
     public void socketClientStart(Integer nodeLvl) throws Exception { // port  between 5000-5555
         int newMember = getRandomNextNodeMember();
         memberPerNode.get(nodeLvl).add(newMember);
-        ServerSocket serverSocket = new ServerSocket(getRandomNextNodeMember());
-        System.out.println("Thread Actor Socket on Node : " + nodeLvl+ " is ready on port: " + serverSocket.getLocalPort());
+        ServerSocket serverSocket = new ServerSocket(newMember);
+        System.out.println("Thread Actor Socket on Node : " + nodeLvl + " is ready on port: " + serverSocket.getLocalPort());
         Socket clientSocket = serverSocket.accept();
 
-
-        PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
         BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         String datas = in.readLine();
 
-        TransitTransaction cryptedTransaction = transactionUtils.jsonToCryptedTransaction(datas);
-        System.out.println(("Node " + nodeLvl + " received transaction: " + cryptedTransaction.getCryptedTransaction()));
+        ObjectMapper objectMapper = new ObjectMapper();
+        TransitTransaction tt = objectMapper.readValue(datas, TransitTransaction.class);
+
+        System.out.println(("Node " + nodeLvl + " received transaction: " + tt.getCryptedTransaction()));
+        if (transactionUtils.checkTransactionValidity(tt) ){
+            broadCastTransactionToNextNodeMembers(tt, nodeLvl + 1);
+
+        } else {
+            System.out.println("Transaction violation by one of the consensus member");
+            System.out.println(", stop broadcasting to next node, Transaction aborted ! ");
+        }
+
     }
 
 
@@ -97,40 +98,52 @@ public class ActorPoolHandler {
 
 
     // les sender sont des - et les receiver des + pour le calcul du montant du wallet !
-    public TransitTransaction setTransitTransaction() throws Exception {
-        Transaction tr = new Transaction();
-        tr.setSenderAddress(InitTransactionDetails.personnalWallet);
-        tr.setSenderAddress(InitTransactionDetails.remoteWallet);
-        tr.setAmount(InitTransactionDetails.transacAmount);
-        tr.setDateTime(String.valueOf(LocalDateTime.now()));
 
-        TransitTransaction tt = new TransitTransaction();
 
-        tt.setCryptedTransaction(ChiffrementUtils.cryptAES(GenericObjectConvert.objectToString(tr), PrivateWalletHandler.walletPrivateKey));
-        return tt;
-    }
+    public void broadCastTransactionFirstNode(Integer nodeLvl) throws Exception {
 
-    public void broadCastTransaction(Integer nodeLvl) throws Exception {
-        TransitTransaction cryptedTransaction = this.setTransitTransaction();
-      this.memberPerNode.get(nodeLvl).forEach(
+        TransitTransaction tt = transactionUtils.setTransitTransaction();
+        this.memberPerNode.get(nodeLvl).forEach(
                 member -> {
-                    Socket socket = null;
                     try {
-                        socket = new Socket(this.host, member);
+                        Socket socket = new Socket(this.host, member);
                         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                        String cryptedTransaction2String = GenericObjectConvert.objectToString(cryptedTransaction);
-                        out.write(cryptedTransaction2String);
+                        out.write(GenericObjectConvert.objectToString(tt));
                         PrintWriter writer = new PrintWriter(out, true);
                         writer.println();
                     } catch (Exception e) {
+                        System.out.println("Error while broadcasting transaction to member " + member + ": " + e.getMessage());
                         throw new RuntimeException(e);
                     }
-
                 });
     }
 
+    public void broadCastTransactionToNextNodeMembers(TransitTransaction tt, Integer nodeLvl) {
+
+        if (nodeLvl > nbOfNode) {
+            System.out.println("Send transaction to block chain server , transaction: " + tt.getCryptedTransactionHash());
+            // submit to the server
+        } else {
+            this.memberPerNode.get(nodeLvl).forEach(
+                    member -> {
+                        try {
+                            Socket socket = new Socket(this.host, member);
+                            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                            String cryptedTransaction2String = GenericObjectConvert.objectToString(tt);
+                            out.write(cryptedTransaction2String);
+                            PrintWriter writer = new PrintWriter(out, true);
+                            writer.println();
+                        } catch (Exception e) {
+                            System.out.println("Error while broadcasting transaction to member " + member + ": " + e.getMessage());
+                            throw new RuntimeException(e);
+                        }
+                    });
+        }
+
+    }
+
     public void dispatchTransactionOnNodes() throws Exception {
-        this.broadCastTransaction(1);
+        this.broadCastTransactionFirstNode(1);
     }
 
     public void broadCastCryptedTransaction() {

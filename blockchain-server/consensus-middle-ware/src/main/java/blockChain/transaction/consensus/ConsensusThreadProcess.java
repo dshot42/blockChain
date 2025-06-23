@@ -49,6 +49,7 @@ public class ConsensusThreadProcess implements Runnable { // membre du jury
     }
 
     public void socketClientStart() throws Exception {
+
         serverSocket = new ServerSocket(Integer.parseInt(ip.split(":")[1]));
         clientSocket = serverSocket.accept();
         triggerRecipeEvent();

@@ -1,6 +1,6 @@
 package consensus.controller;
 
-import client.wallet.handler.personalWalletHandler.InitTransactionDetails;
+import vendor.transaction.service.InitTransactionDetails;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,9 +14,7 @@ import javax.validation.Valid;
 @CrossOrigin(origins = "*") // important
 @RestController
 @RequestMapping("/transaction")
-public class ConsensorController {
-
-
+public class ConsensusController {
    @Autowired
     ActorPoolHandler actorPoolHandler;
 
@@ -29,14 +27,12 @@ public class ConsensorController {
 
     @PostMapping("/send")
     @CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.POST})
-    public ResponseEntity<String> handlePostRequest(@RequestBody @Valid String requestData) {
+    public ResponseEntity<Object> handlTransactionRequest(@RequestBody @Valid String requestData) {
 
         System.out.println("Received data: " + requestData);
-
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(requestData);
-
             InitTransactionDetails.setTransationDetails(jsonNode.get("from").asText(), jsonNode.get("to").asText(), jsonNode.get("amount").asLong());
 
             actorPoolHandler.dispatchTransactionOnNodes();

@@ -3,9 +3,10 @@ package blockChain.transaction.buyer;
 import blockChain.chiffrement.ChiffrementUtils;
 import blockChain.nodeThreads.utils.TransactionUtils;
 import blockChain.transaction.consensus.ConsensusUtils;
-import client.wallet.handler.personalWalletHandler.InitTransactionDetails;
-import client.wallet.handler.personalWalletHandler.PrivateWalletHandler;
+
 import vendor.models.TransitTransaction;
+import vendor.transaction.service.InitTransactionDetails;
+import vendor.transaction.service.PrivateWalletHandler;
 import vendor.utils.GenericObjectConvert;
 
 import blockChain.transaction.consensus.ConsensusThreadProcess;
@@ -69,7 +70,7 @@ public class SendTransactionProcess implements Runnable { // processus de l'ache
         return GenericObjectConvert.objectToString(sendTransaction);
     }
 
-    private static Transaction MapperTransaction(TransitTransaction askTransaction) throws URISyntaxException {
+    private static Transaction MapperTransaction(TransitTransaction askTransaction) {
         Transaction transaction = new Transaction();
         transaction.setReceiverAddress(askTransaction.getSenderAddress()); // address communiqué
         PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler(InitTransactionDetails.personnalWallet.getAddress(), InitTransactionDetails.personnalWallet.getWalletId());
@@ -116,7 +117,7 @@ public class SendTransactionProcess implements Runnable { // processus de l'ache
         while (i != ConsensusUtils.numberConsensusMember) {
             String consensusMember = nodeUtils.getRandomNextNodeMember();
             startNextConsensusMemberThread(consensusMember);
-            Thread.sleep(100); // le temps de demarrer la socket d'écoute
+            Thread.sleep(1000); // le temps de demarrer la socket d'écoute
             nodeUtils.socketEmitToNextThread(consensusMember, cryptedTransactiondata);
             i++;
         }

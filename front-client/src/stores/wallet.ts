@@ -36,7 +36,8 @@ interface WalletState {
 interface TransactionPackage {
   from: string | undefined
   to: string | undefined
-  amount: number
+  amountSended: number
+  amountReceived: number
 }
 
 const walletId = 'Personnal'
@@ -51,19 +52,23 @@ export const useWalletStore = defineStore('wallet', () => {
   const transacPackage = ref<TransactionPackage>({
     from: undefined,
     to: undefined,
-    amount: 0,
+    amountSended: 0,
+    amountReceived: 0,
   })
 
-  const sendTransaction = async () => {
+  const sendTransaction = async (sendOrRiceive: boolean) => {
     try {
       transacPackage.value.from = walletId
 
       console.log('Transaction package:', transacPackage.value)
-      const response = await axios
+
+      await axios
         .post(consensusAddress + '/transaction/send', {
-          from: transacPackage.value.from,
-          to: transacPackage.value.to,
-          amount: transacPackage.value.amount,
+          from: sendOrRiceive ? walletId : 'cryptoProvider', // on inverse pour crediter
+          to: sendOrRiceive ? transacPackage.value.to : walletId,
+          amount: sendOrRiceive
+            ? transacPackage.value.amountSended
+            : transacPackage.value.amountReceived,
         })
         .then(function (response) {
           console.log(response)
@@ -111,9 +116,11 @@ export const useWalletStore = defineStore('wallet', () => {
         address: data.address,
         id: data.walletId,
         cryptedContent: data.cryptedContent,
-        amount: Array.from(data.transactions).reduce((acc: number, tx: any) => {
-          return acc + (tx.senderAddress.walletId === walletId ? -tx.amount : tx.amount)
-        }, 0),
+        amount: Array.isArray(data.transactions)
+          ? Array.from(data.transactions).reduce((acc: number, tx: any) => {
+              return acc + (tx.senderAddress.walletId === walletId ? -tx.amount : tx.amount)
+            }, 0)
+          : 0,
         transactions: Array.isArray(data.transactions)
           ? data.transactions.map((trans: any) => ({
               id: trans.id,
@@ -129,8 +136,6 @@ export const useWalletStore = defineStore('wallet', () => {
           : [],
       }
 
-      console.log(data.transactions[0])
-      console.log(walletstate.value.wallet.transactions[0])
       walletstate.value.refreshWallet = true
     } catch (error) {
       console.error('Failed to fetch wallet :', error)

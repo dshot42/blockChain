@@ -3,7 +3,7 @@ package blockChain.nodeThreads.utils;
 import blockChain.chiffrement.ChiffrementUtils;
 
 import blockChain.nodeThreads.RunnableConsensusMemberThreadProcess;
-import client.wallet.handler.personalWalletHandler.PrivateWalletHandler;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import vendor.models.PublicWallet;
 import vendor.models.Transaction;
 import vendor.models.TransitTransaction;
+import vendor.transaction.service.PrivateWalletHandler;
 import vendor.utils.GenericObjectConvert;
 
 import javax.crypto.BadPaddingException;

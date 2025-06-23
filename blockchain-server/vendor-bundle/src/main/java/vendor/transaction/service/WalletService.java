@@ -1,4 +1,4 @@
-package client.wallet.handler.personalWalletHandler;
+package vendor.transaction.service;
 
 import blockChain.chiffrement.ChiffrementUtils;
 import org.apache.http.HttpEntity;

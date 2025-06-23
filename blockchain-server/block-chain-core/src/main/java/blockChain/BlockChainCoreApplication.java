@@ -1,10 +1,13 @@
 package blockChain;
 
+import blockChain.system.mongoDb.service.BlockChainService;
+import blockChain.system.mongoDb.service.CreateBlockChain;
 import blockChain.system.mongoDb.webSocket.MongoWebConsensusListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Configuration;
+
 
 @Configuration
 @SpringBootApplication
@@ -12,10 +15,17 @@ public class BlockChainCoreApplication {
 
     static MongoWebConsensusListener mongoWebConsensusListener;
 
+    static BlockChainService blockChainService;
+
+    static CreateBlockChain createInitBlockChain;
+
     @Autowired
-    public BlockChainCoreApplication(MongoWebConsensusListener mongoWebConsensusListener) {
+    public BlockChainCoreApplication(MongoWebConsensusListener mongoWebConsensusListener,
+                                     BlockChainService blockChainService, CreateBlockChain createInitBlockChain) {
 
         this.mongoWebConsensusListener = mongoWebConsensusListener;
+        this.blockChainService = blockChainService;
+        this.createInitBlockChain = createInitBlockChain;
 
     }
 
@@ -42,6 +52,10 @@ public class BlockChainCoreApplication {
 
         Thread systemSocketListener = new Thread(mongoWebConsensusListener); // acheteur
         systemSocketListener.start();
+        createInitBlockChain.initBlockChain();
+
+        // test
+       blockChainService.getAllTransactions("Personnal");
 
     }
 
