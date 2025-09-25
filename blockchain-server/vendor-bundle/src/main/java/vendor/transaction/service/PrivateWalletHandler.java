@@ -93,7 +93,7 @@ public class PrivateWalletHandler {
         } catch (Exception e) {
             throw new RuntimeException("Fail to persist Wallet , " + e);
         }
-        System.out.println("[SUCCES] Wallet  : " + personnalWallet.walletId);
+        System.out.println(" [SUCCES] get Wallet  : " + personnalWallet.walletId);
 
         return personnalWallet;
     }
@@ -104,7 +104,7 @@ public class PrivateWalletHandler {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode jsonObject = objectMapper.createObjectNode();
         jsonObject.put("walletId", "Personnal");
-        jsonObject.put("privateKey", PrivateWalletHandler.walletPrivateKey);
+        jsonObject.put("privateKey",GenericObjectConvert.objectToString(PrivateWalletHandler.walletPrivateKey));
 
         String jsonString = objectMapper.writeValueAsString(jsonObject);
 
@@ -329,6 +329,7 @@ public class PrivateWalletHandler {
             return publicTransac;
         }).collect(Collectors.toList());
 
+        System.out.println(" ici probleme, il faut que cela puisse etre autre que personnal !!! " + privateWallet.getWalletId());
         return new PublicWallet(privateWallet.getAddress()
                 , privateWallet.getWalletId(), publicTransacList);
     }

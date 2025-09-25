@@ -5,8 +5,6 @@ import { io } from 'socket.io-client'
 
 const walletAddress = 'http://localhost:8091'
 
-const consensusAddress = 'http://localhost:8092'
-
 interface Transaction {
   id: number
   senderAddress: Wallet
@@ -63,7 +61,7 @@ export const useWalletStore = defineStore('wallet', () => {
       console.log('Transaction package:', transacPackage.value)
 
       await axios
-        .post(consensusAddress + '/transaction/send', {
+        .post(walletAddress + '/api/wallet/send', {
           from: sendOrRiceive ? walletId : 'cryptoProvider', // on inverse pour crediter
           to: sendOrRiceive ? transacPackage.value.to : walletId,
           amount: sendOrRiceive

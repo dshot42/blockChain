@@ -5,8 +5,7 @@ import blockChain.chiffrement.ChiffrementUtils;
 import blockChain.system.mongoDb.repository.ElementRepository;
 import blockChain.system.mongoDb.service.BlockChainService;
 import blockChain.system.mongoDb.service.SequenceGeneratorService;
-import blockChain.transaction.buyer.SendTransactionProcess;
-import blockChain.transaction.seller.AckAndReceiveTransactionProcess;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -16,8 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import vendor.models.PublicWallet;
 import vendor.models.Transaction;
 import vendor.models.TransitTransaction;
+import vendor.utils.GenericObjectConvert;
 
 import javax.validation.Valid;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,9 +44,10 @@ public class MongoWebServiceController {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(datas);
         String walletId = jsonNode.get("walletId").asText();
-        String privateKey = jsonNode.get("privateKey").asText();
+        byte[] privateKey = (byte[]) GenericObjectConvert.stringToObject(jsonNode.get("privateKey").asText(),byte[].class);
         // set in static map //
-        blockChainService.privateKeys.put(walletId, privateKey.getBytes());
+        System.out.println(privateKey);
+        blockChainService.privateKeys.put(walletId, privateKey);
         return ResponseEntity.ok("Serveur Received private key.");
     }
 
@@ -95,7 +97,7 @@ public class MongoWebServiceController {
         return Class.forName(element);
     }
 
-    ///////////////////// specificBlockChain /////////////////// a mettre ailleurs !
+    ///////////////////// specificBlockChain ///////////////////
 
     @PostMapping("/BlockChain/transaction/checkIntegrity")
     public ResponseEntity<Object> getTransaction(@Valid @RequestBody String datas) throws Exception {
@@ -105,7 +107,7 @@ public class MongoWebServiceController {
     @PostMapping("/BlockChain/transaction")
     public ResponseEntity<Object> createOrUpdateBlockChain(@Valid @RequestBody String datas) throws Exception {
         try {
-            blockChainService.registryTransactionOnBlockChain(datas);
+            blockChainService.registryTransactionOnBlockChain(TransitTransaction.class.cast(GenericObjectConvert.stringToObject(datas, TransitTransaction.class)));
             System.out.println("\"/BlockChain/transaction\" Transaction successfully registered on the blockchain !  ");
             return ResponseEntity.ok("update blockChain");
         } catch (Exception e) {

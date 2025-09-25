@@ -1,6 +1,8 @@
 package blockChain.transaction.consensus;
 
 import blockChain.nodeThreads.utils.TransactionUtils;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import vendor.models.TransitTransaction;
 import vendor.utils.GenericObjectConvert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +27,12 @@ public class ConsensusThreadProcess implements Runnable { // membre du jury
 
     public String nextMember;
 
-    @Autowired
     TransactionUtils nodeUtils;
 
     public boolean isReady = false;
 
     private static int cptMember = 0;
 
-    @Autowired
     public ConsensusThreadProcess(String ip, TransactionUtils nodeUtils) {
         this.ip = ip;
         this.nodeUtils = nodeUtils;
@@ -42,6 +42,7 @@ public class ConsensusThreadProcess implements Runnable { // membre du jury
         // code in the other thread, can reference "var" variable
         try {
             isReady = true;
+
             socketClientStart();
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -32,7 +32,6 @@ public class RunnableConsensusMemberThreadProcess implements Runnable { // membr
 
     private static int cptMember = 0;
 
-    @Autowired
     public RunnableConsensusMemberThreadProcess(String ip, String nextMember, TransactionUtils consensusSocketUtils) {
         this.ip = ip;
         this.nextMember = nextMember;
@@ -71,7 +70,7 @@ public class RunnableConsensusMemberThreadProcess implements Runnable { // membr
             if (cptMember < TransactionUtils.nodeValidatorLvl) {
                 nodeUtils.startNextNodeMemberThread(nextMember); // start next Thread
                 Thread.sleep(100); // cela serait mieux avec un ack, verifier que les socket member sont ready !
-
+                System.out.println(" RunnableConsensusMemberThreadProcess triggerRecipeEvent");
                 nodeUtils.socketEmitToNextThread(nextMember, GenericObjectConvert.objectToString(cryptedTransaction));
             } else {
                 sendToFinalDestinator(cryptedTransaction, GenericObjectConvert.objectToString(cryptedTransaction));

@@ -82,27 +82,30 @@ onMounted(() => {
 <style scoped>
 body {
   display: grid;
-  grid-template-rows: auto 1fr;
-  width: 100vw;
-  height: 100vh;
-  margin: 0;
+  grid-template-columns: repeat(auto, 1fr);
+  grid-gap: 10px;
+  grid-auto-rows: minmax(100px, auto);
+  width: 100%;
+  margin: auto;
+  height: auto;
   font-family: 'Segoe UI', Arial, sans-serif;
 }
 .wallet-block,
 .emit-transaction {
-  grid-row: 1 / 2;
-  float: left;
-  display: flex;
-  flex-direction: column;
-  width: 500px;
-  margin: 40px auto;
-  padding: 24px;
+  grid-row: 1;
+  width: 400px;
+  margin: auto;
+  margin-top: 30px;
+  padding: 10px;
   background: #f8f9fa;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
   font-family: 'Segoe UI', Arial, sans-serif;
 }
 
+.wallet-block {
+  width: 600px !important;
+}
 .emit-transaction input {
   width: 100%;
   padding: 8px;

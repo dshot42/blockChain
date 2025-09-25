@@ -8,7 +8,6 @@ import blockChain.nodeThreads.utils.TransactionUtils;
 import blockChain.system.mongoDb.service.BlockChainService;
 import blockChain.transaction.consensus.ConsensusUtils;
 
-import blockChain.transaction.seller.AckAndReceiveTransactionProcess;
 import org.springframework.stereotype.Service;
 import vendor.models.TransitTransaction;
 import vendor.utils.GenericObjectConvert;
@@ -16,7 +15,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import vendor.models.Transaction;
-
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -62,7 +60,6 @@ public class MongoWebConsensusListener implements Runnable {
             clientSocket = serverSocket.accept();
             System.out.println("System receive transaction from consensus member ! ");
             triggerRecipeEvent();
-            // fixme ici on recoit un msg sans addresse , trouver le coupable
         }
     }
 
@@ -70,30 +67,29 @@ public class MongoWebConsensusListener implements Runnable {
         out = new PrintWriter(clientSocket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         System.out.println("triggerRecipeEvent() ThreadPoolHandler");
-        TransitTransaction containerToEmit = nodeUtils.jsonToCryptedTransaction(in.readLine());
+        TransitTransaction transitTransaction = nodeUtils.jsonToCryptedTransaction(in.readLine());
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        String transaction2string = ChiffrementUtils.decryptAES(containerToEmit.getCryptedTransaction(), ChiffrementUtils.systemKey);
-
+        String transaction2string = ChiffrementUtils.decryptAES(transitTransaction.getCryptedTransaction(), ChiffrementUtils.systemKey);
         Transaction transaction = objectMapper.readValue(transaction2string, Transaction.class);
 
         List<String> listHash = new LinkedList<>();
         if (consensusReceipeHash.containsKey(transaction2string)) {
              listHash = consensusReceipeHash.get(transaction2string);
         }
-        listHash.add(containerToEmit.getCryptedTransactionHash());
+        listHash.add(transitTransaction.getCryptedTransactionHash());
         consensusReceipeHash.put(transaction2string, listHash);
 
         if (consensusReceipeHash.get(transaction2string).size() == ConsensusUtils.numberConsensusMember) {
             boolean isValidated = checkConsensusValidity(transaction, consensusReceipeHash.get(transaction2string));
             if (isValidated) {
                 System.out.println("Consensus System : Validation of Transation riceived by consensus core ! ");
-                if (containerToEmit != null) {
-                    blockChainService.registryTransactionOnBlockChain(containerToEmit.getCryptedTransaction());
+                if (transitTransaction != null) {
+                    blockChainService.registryTransactionOnBlockChain(transitTransaction);
                      // send transaction to receiver of the transaction
                     // inutile il aura simplement a synchroniser son wallet depis la blockchain
-                      // nodeUtils.socketEmitToNextThread(containerToEmit.getReceiverAddress().getAddress(), GenericObjectConvert.objectToString(containerToEmit));
+                      // nodeUtils.socketEmitToNextThread(transitTransaction.getReceiverAddress().getAddress(), GenericObjectConvert.objectToString(transitTransaction));
                 }
                 consensusReceipeHash.remove(transaction2string);
             } else {
@@ -105,7 +101,7 @@ public class MongoWebConsensusListener implements Runnable {
 
     private void sendTransitTransactionToConsensusMember(TransitTransaction transitTransaction, String transaction2string) throws Exception {
         if (transitTransaction != null) {
-           blockChainService.registryTransactionOnBlockChain(transitTransaction.getCryptedTransaction());
+           blockChainService.registryTransactionOnBlockChain(transitTransaction);
             nodeUtils.socketEmitToNextThread(transitTransaction.getReceiverAddress().getAddress(), GenericObjectConvert.objectToString(transitTransaction));
         }
         consensusReceipeHash.remove(transaction2string);

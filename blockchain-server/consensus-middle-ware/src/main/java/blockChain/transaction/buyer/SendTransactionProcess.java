@@ -2,25 +2,22 @@ package blockChain.transaction.buyer;
 
 import blockChain.chiffrement.ChiffrementUtils;
 import blockChain.nodeThreads.utils.TransactionUtils;
-import blockChain.transaction.consensus.ConsensusUtils;
-
-import vendor.models.TransitTransaction;
-import vendor.transaction.service.InitTransactionDetails;
-import vendor.transaction.service.PrivateWalletHandler;
-import vendor.utils.GenericObjectConvert;
-
 import blockChain.transaction.consensus.ConsensusThreadProcess;
+import blockChain.transaction.consensus.ConsensusUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import vendor.models.PrivateWallet;
 import vendor.models.Transaction;
+import vendor.models.TransitTransaction;
+import vendor.transaction.service.InitTransactionDetails;
+import vendor.transaction.service.PrivateWalletHandler;
+import vendor.utils.GenericObjectConvert;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URISyntaxException;
 
 @Component
 public class SendTransactionProcess implements Runnable { // processus de l'acheteur
@@ -61,8 +58,9 @@ public class SendTransactionProcess implements Runnable { // processus de l'ache
         //     transaction.setHash(ChiffrementUtils.cryptAES(transactionJson));
 
         TransitTransaction sendTransaction = new TransitTransaction();
+        System.out.println("generateCryptedTransaction" + ackTransaction.getSenderAddress().walletId + ",   " + ackTransaction.getReceiverAddress().walletId);
         sendTransaction.setReceiverAddress(ackTransaction.getSenderAddress());
-        // laddresse de m'émeteur devient laddresse du recepteur
+        sendTransaction.setSenderAddress(ackTransaction.getReceiverAddress());
 
         sendTransaction.setCryptedTransaction(ChiffrementUtils.cryptAES(transactionJson, privateKeyCache));
         sendTransaction.setCryptedTransactionHash(ChiffrementUtils.generateHashKey(sendTransaction.getCryptedTransaction()));
@@ -97,8 +95,8 @@ public class SendTransactionProcess implements Runnable { // processus de l'ache
             if (cryptedTransaction.getState().equals("SYN")) { //  demande de transaction
                 System.out.println("SYNC receive");
                 // first scenario
-             //   nodeUtils.emitCryptedTransactionOnNode(generateCryptedTransaction(cryptedTransaction, cryptedTransaction.getKey()));
-             //   Thread.sleep(10000); // on wait 10 sec avant pour pas avoir de souci d'asynchrone
+                //   nodeUtils.emitCryptedTransactionOnNode(generateCryptedTransaction(cryptedTransaction, cryptedTransaction.getKey()));
+                //   Thread.sleep(10000); // on wait 10 sec avant pour pas avoir de souci d'asynchrone
 
                 // second scenario => consensus
                 emitBroadcastCryptedTransactionOnConsensus(generateCryptedTransaction(cryptedTransaction, ChiffrementUtils.systemKey)); // systeme key
@@ -110,7 +108,7 @@ public class SendTransactionProcess implements Runnable { // processus de l'ache
     }
 
 
-    /////////////////////////  SYSTEME PAR CONSENSUS  /////////////////////////
+    /// //////////////////////  SYSTEME PAR CONSENSUS  /////////////////////////
 
     public void emitBroadcastCryptedTransactionOnConsensus(String cryptedTransactiondata) throws Exception {
         int i = 0;

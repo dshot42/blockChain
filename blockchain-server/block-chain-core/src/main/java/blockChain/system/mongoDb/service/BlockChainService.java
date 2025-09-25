@@ -15,6 +15,7 @@ import vendor.models.Block;
 import vendor.models.PublicWallet;
 import vendor.models.Transaction;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -35,6 +36,10 @@ public class BlockChainService {
 
     @Autowired
     CreateBlockChain createInitBlockChain;
+
+    public BlockChainService () {
+        this.privateKeys.put("cryptoProvider", privateKey);
+    }
 
 
 
@@ -65,11 +70,13 @@ public class BlockChainService {
     }
 
 
-    public TransitTransaction registryTransactionOnBlockChain(String transactionToString) throws Exception {
-
+    public TransitTransaction registryTransactionOnBlockChain(TransitTransaction transitTransaction) throws Exception {
+        // todo ici
         ObjectMapper objectMapper = new ObjectMapper();
-        Transaction transaction = objectMapper.readValue(ChiffrementUtils.decryptAES(transactionToString,privateKey), Transaction.class);
-
+        System.out.println(transitTransaction.getSenderAddress().walletId +" => " + this.privateKeys.get(transitTransaction.getSenderAddress().walletId));
+        System.out.println(transitTransaction.getSenderAddress() + this.privateKeys.get(transitTransaction.getSenderAddress().walletId).toString());
+        Transaction transaction = objectMapper.readValue(ChiffrementUtils.decryptAES(transitTransaction.getCryptedTransaction(),this.privateKeys.get(transitTransaction.getSenderAddress().walletId)), Transaction.class);
+        // ici probleme avec la clef !
         AtomicBoolean validity = new AtomicBoolean(true);
 
         List<PublicWallet> wallets = new LinkedList<>();
@@ -143,7 +150,7 @@ public class BlockChainService {
 
         TransitTransaction transitTransaction = new TransitTransaction();
         transitTransaction.setState("ACK");
-        transitTransaction.setCryptedTransaction(ChiffrementUtils.cryptAES(GenericObjectConvert.objectToString(transaction), privateKey));
+        transitTransaction.setCryptedTransaction(ChiffrementUtils.cryptAES(GenericObjectConvert.objectToString(transaction), this.privateKeys.get(transaction.getSenderAddress().getWalletId())));
         transitTransaction.setSenderAddress(transaction.getSenderAddress());
         transitTransaction.setReceiverAddress(transaction.getReceiverAddress());
         return transitTransaction;

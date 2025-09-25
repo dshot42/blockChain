@@ -45,7 +45,20 @@ public class ActorPoolHandler {
                 int finalJ = j; //
                 executor.submit(() -> {
                     try {
-                        socketClientStart(finalJ);
+                        Integer newMember = getRandomNextNodeMember();
+                        ProcessBuilder processBuilder = new ProcessBuilder(
+                                "docker", "run", "--name", "member-"+String.valueOf(newMember), "-d", "consensus-member"
+                        );
+                        processBuilder.redirectErrorStream(true);
+                        Process process = processBuilder.start();
+
+                        int exitCode = process.waitFor();
+                        if (exitCode == 0) { // success
+                            System.out.println("Docker container started successfully: " + "member-"+String.valueOf(newMember));
+                            socketClientStart(finalJ, newMember);
+                        } else {
+                            System.err.println("Failed to start Docker container: " + newMember);
+                        }
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -58,8 +71,8 @@ public class ActorPoolHandler {
         System.out.println("Actor Pool Handler is ready with " + nbOfMembersPerNodes + " members.");
     }
 
-    public void socketClientStart(Integer nodeLvl) throws Exception { // port  between 5000-5555
-        int newMember = getRandomNextNodeMember();
+    public void socketClientStart(Integer nodeLvl,Integer newMember) throws Exception { // port  between 5000-5555
+
         memberPerNode.get(nodeLvl).add(newMember);
         ServerSocket serverSocket = new ServerSocket(newMember);
         System.out.println("Thread Actor Socket on Node : " + nodeLvl + " is ready on port: " + serverSocket.getLocalPort());

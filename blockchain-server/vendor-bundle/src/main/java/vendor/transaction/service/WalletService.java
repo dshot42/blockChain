@@ -12,11 +12,13 @@ import org.springframework.stereotype.Component;
 import vendor.models.PrivateWallet;
 import vendor.models.PublicWallet;
 import vendor.models.Transaction;
+import vendor.models.TransitTransaction;
 import vendor.utils.GenericObjectConvert;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,14 +29,34 @@ public class WalletService {
 
         if (wallet.getTransactions() == null) return true;
 
-        List<Transaction> transactionViolation =
-                wallet.getTransactions().parallelStream().filter(t -> {
-                    try {
-                        return !checkTransactionOnBlockChain(t);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }).collect(Collectors.toList());
+        List<TransitTransaction> transactionViolation = wallet.getTransactions().stream().map(transaction -> {
+            TransitTransaction askTransaction = null;
+            try {
+                askTransaction = new TransitTransaction();
+                askTransaction.setReceiverAddress(InitTransactionDetails.personnalWallet);
+
+                askTransaction.setCryptedTransaction(ChiffrementUtils.cryptAES(
+                        GenericObjectConvert.objectToString(transaction)));
+
+                PrivateWalletHandler privateWalletHandler = new PrivateWalletHandler(InitTransactionDetails.remoteWallet.getAddress(), InitTransactionDetails.remoteWallet.getWalletId());
+                PrivateWallet myPrivateWallet = privateWalletHandler.getWallet();
+                askTransaction.setSenderAddress(privateWalletHandler.mapPrivateToPublicWaller(myPrivateWallet));
+                askTransaction.setDateTime(LocalDateTime.now().toString());
+                askTransaction.setState("SYN");
+                askTransaction.setAmount(InitTransactionDetails.transacAmount);
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return askTransaction;
+        }).collect(Collectors.toList()).parallelStream().filter(t -> {
+            try {
+                return !checkTransactionOnBlockChain(t);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }).collect(Collectors.toList());
+
         return transactionViolation.size() == 0;
     }
 
@@ -57,10 +79,9 @@ public class WalletService {
     }
 
 
-    public static boolean checkTransactionOnBlockChain(Transaction transaction) throws Exception {
+    public static boolean checkTransactionOnBlockChain(TransitTransaction tt) throws Exception {
 
-
-        StringEntity entity = new StringEntity(ChiffrementUtils.cryptAES(GenericObjectConvert.objectToString(transaction)),
+        StringEntity entity = new StringEntity(ChiffrementUtils.cryptAES(GenericObjectConvert.objectToString(tt)),
                 ContentType.APPLICATION_FORM_URLENCODED);
 
         DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -79,7 +100,7 @@ public class WalletService {
             return Boolean.valueOf(data);
 
         } catch (Exception e) {
-            System.out.println("Erreur lors de la communication avec le serveur, Check integrity of the transaction ");
+            System.out.println("Erreur lors de la communication avec le serveur, Check integrity of the tt ");
         }
         return false;
     }

@@ -22,7 +22,7 @@ public class TransactionUtils {
 
     public TransitTransaction setTransitTransaction() throws Exception {
         Transaction tr = new Transaction();
-        tr.setSenderAddress(InitTransactionDetails.personnalWallet);
+        tr.setReceiverAddress(InitTransactionDetails.personnalWallet);
         tr.setSenderAddress(InitTransactionDetails.remoteWallet);
         tr.setAmount(InitTransactionDetails.transacAmount);
         tr.setDateTime(String.valueOf(LocalDateTime.now()));

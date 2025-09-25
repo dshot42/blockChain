@@ -1,0 +1,17 @@
+
+
+create image of my consensus from Dockerfile
+docker image build -t imageName .
+// ici on peut definir le nom que l'on veut pour notre image
+
+check whole images :
+docker image ls
+
+remove image :
+docker image rm imageName -f
+
+
+ProcessBuilder processBuilder = new ProcessBuilder(
+    "docker", "run", "--name", newMember.toString(), "-d", "app"
+);
+=> run the thread under a container

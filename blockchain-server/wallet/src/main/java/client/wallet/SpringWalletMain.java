@@ -33,7 +33,7 @@ public class SpringWalletMain{
     public static void main(String[] args) throws Exception {
         System.out.println("Starting Wallet Application...");
         SpringApplication.run(SpringWalletMain.class, args);
-        Thread.sleep((long) 15000 ); // wait for the system to start
+        Thread.sleep((long) 5000 ); // wait server
         System.out.println("Check wallet : ");
         checkWallet();
         System.out.println("Wallet is ready, launching transaction");
